@@ -8,6 +8,22 @@ public class BasicEnemy : MonoBehaviour
     public float movementSpeed = 3f;  // Speed of the enemy
     public float damage = 10f;        // Damage dealt to the defender
     public bool canAttack = true;     // Whether this enemy can attack
+    public float attackRange = 1f;    // Attack range for detecting defenders
+    public MeshGenerator meshGenerator; // Reference to MeshGenerator
+
+    private List<Vector3> waypoints = new List<Vector3>(); // List of waypoints for this enemy
+    private int currentWaypointIndex = 0; // The current waypoint the enemy is moving towards
+    protected DefenderBase currentTarget; // Current target in range
+    protected Hourglass currentTargetH;
+
+    public void InitializePath(int pathIndex)
+    {
+        // Initialize the waypoints based on the chosen path index
+        if (meshGenerator != null && meshGenerator.pathWaypoints.ContainsKey(pathIndex))
+        {
+            waypoints = meshGenerator.pathWaypoints[pathIndex];
+        }
+    }
 
     // Take damage function (called when attacked by a defender)
     public virtual void TakeDamage(float damage)
@@ -28,29 +44,110 @@ public class BasicEnemy : MonoBehaviour
         Destroy(gameObject);
     }
 
-    // Enemy movement logic (can be customized in specific enemy types)
-    public virtual void MoveTowardsTarget(Vector3 targetPosition)
+    // Enemy movement logic
+    public virtual void MoveAlongPath()
     {
-        Vector3 direction = (targetPosition - transform.position).normalized;
-        transform.Translate(direction * movementSpeed * Time.deltaTime);
-    }
+        if (waypoints.Count == 0 || currentWaypointIndex >= waypoints.Count)
+            return;
 
-    // This function can be called to attack defenders
-    public virtual void AttackDefender(DefenderBase defender)
-    {
-        if (canAttack)
+        Vector3 targetPosition = waypoints[currentWaypointIndex];
+        Vector3 direction = (targetPosition - transform.position).normalized;
+        transform.Translate(direction * movementSpeed * Time.deltaTime, Space.World);
+
+        // If we reach the current waypoint, move to the next one
+        if (Vector3.Distance(transform.position, targetPosition) < 0.2f)
         {
-            defender.TakeDamage(damage);
-            Debug.Log(gameObject.name + " attacked " + defender.gameObject.name + " for " + damage + " damage.");
+            currentWaypointIndex++;
         }
     }
 
-    // Example Update method for moving and attacking
+    // Method to find defenders in attack range
+    public virtual void DetectDefendersInRange()
+    {
+        if (currentTarget == null || currentTarget.defenderHealth <= 0)
+        {
+            FindNewTarget();  // Find a new defender to attack
+        }
+        else
+        {
+            AttackTarget();  // Continue attacking the current defender
+        }
+        if (currentTargetH == null || currentTargetH.hourglassHealth <= 0)
+        {
+            FindNewTarget();  // Find a new defender to attack
+        }
+        else
+        {
+            AttackTarget();  // Continue attacking the current defender
+        }
+    }
+
+    // Method to attack the current target
+    protected virtual void AttackTarget()
+    {
+        if (currentTarget != null)
+        {
+            if (Vector3.Distance(transform.position, currentTarget.transform.position) <= attackRange)
+            {
+                if (canAttack)
+                {
+                    currentTarget.TakeDamage(damage);
+                    canAttack = false;
+                    Invoke(nameof(ResetAttack), 1f); // Adjust attack cooldown
+                }
+            }
+        }
+        if (currentTargetH != null)
+        {
+            if (Vector3.Distance(transform.position, currentTargetH.transform.position) <= attackRange)
+            {
+                if (canAttack)
+                {
+                    currentTargetH.TakeDamage(damage * 0.5f);
+                    canAttack = false;
+                    Invoke(nameof(ResetAttack), 1f); // Adjust attack cooldown
+                }
+            }
+        }
+    }
+
+    // Reset the attack cooldown
+    protected void ResetAttack()
+    {
+        canAttack = true;
+    }
+
+    // Find a new target to attack
+    protected void FindNewTarget()
+    {
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, attackRange);  // Adjust detection range
+        foreach (var hitCollider in hitColliders)
+        {
+            if (hitCollider.CompareTag("Defender"))
+            {
+                currentTarget = hitCollider.GetComponent<DefenderBase>();
+                if (currentTarget != null && currentTarget.defenderHealth > 0)
+                {
+                    break;  // Focus on one defender at a time
+                }
+            }
+            if (hitCollider.CompareTag("HourGlass"))
+            {
+                currentTargetH = hitCollider.GetComponent<Hourglass>();
+                if (currentTargetH != null && currentTargetH.hourglassHealth > 0)
+                {
+                    break;  // Focus on one defender at a time
+                }
+            }
+        }
+    }
+
     public virtual void Update()
     {
-        // Move towards a target (e.g., the player's base or a defender)
-        // This target can be passed in or decided by the specific enemy logic
-        // For simplicity, we'll move towards the origin (0,0,0)
-        MoveTowardsTarget(Vector3.zero);
+        // Move along the path
+        MoveAlongPath();
+
+        // Check for defenders in range
+        DetectDefendersInRange();
     }
 }

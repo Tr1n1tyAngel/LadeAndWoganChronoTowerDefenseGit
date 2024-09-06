@@ -17,13 +17,17 @@ public class MeshGenerator : MonoBehaviour
 
     public GameObject objectToPlace; // Object to place at the center
     public int pathWidth = 1;  // Width of the paths
-
     public Material terrainMaterial; // Material with texture atlas (terrain + path)
+    public GameObject[] randomObjects;  // Array of random objects to place on the terrain
 
     private bool[,] pathMap;  // 2D array to track path positions
     public List<Vector3> flattenedPositions = new List<Vector3>();  // List of flattened positions for object placement
     public int numberOfFlattenedPositions = 10; // Number of valid object placement positions
     public float maxDistanceToPath = 5f; // Maximum distance to place towers near the path
+    public List<Vector3> pathStartPoints = new List<Vector3>(); // Store path start points for enemy spawning
+
+    // Store all path waypoints for each path
+    public Dictionary<int, List<Vector3>> pathWaypoints = new Dictionary<int, List<Vector3>>();
 
     void Start()
     {
@@ -41,6 +45,7 @@ public class MeshGenerator : MonoBehaviour
         CreateShape();
         CreatePaths();  // Generate non-overlapping winding paths to the center
         CreateFlattenedPositions();  // Create flattened positions for object placement
+        PlaceRandomObjects(); // Place random objects on the mesh
         UpdateMesh();
         PlaceObjectAtCenter(); // Place object at the center of the grid
     }
@@ -67,10 +72,7 @@ public class MeshGenerator : MonoBehaviour
                 }
 
                 vertices[index] = new Vector3(x, y, z);
-
-                // Set default UVs for terrain (0 to 0.5) - assuming terrain is on the left side of the texture atlas
                 uvs[index] = new Vector2((float)x / xSize * 0.5f, (float)z / zSize);
-
                 index++;
             }
         }
@@ -106,16 +108,23 @@ public class MeshGenerator : MonoBehaviour
             new Vector2Int(Random.Range(0, xSize), 0)          // Top edge
         };
 
+        // Store the center positions of the 3 starting squares for enemy spawning
+        for (int i = 0; i < startPoints.Length; i++)
+        {
+            pathStartPoints.Add(new Vector3(startPoints[i].x + 0.5f, 1f, startPoints[i].y + 0.5f));
+            pathWaypoints[i] = new List<Vector3>(); // Initialize the pathWaypoints for each path
+        }
+
         // The center 2x2 square
         Vector2Int centerPoint1 = new Vector2Int(xSize / 2, zSize / 2);
 
-        foreach (Vector2Int start in startPoints)
+        for (int i = 0; i < startPoints.Length; i++)
         {
-            CreateWindingPath(start, centerPoint1);
+            CreateWindingPath(startPoints[i], centerPoint1, i);
         }
     }
 
-    void CreateWindingPath(Vector2Int start, Vector2Int end)
+    void CreateWindingPath(Vector2Int start, Vector2Int end, int pathIndex)
     {
         Vector2Int currentPos = start;
         Vector2Int direction;
@@ -126,6 +135,7 @@ public class MeshGenerator : MonoBehaviour
         {
             attempts++;
             FlattenSquare(currentPos.x, currentPos.y);
+            pathWaypoints[pathIndex].Add(new Vector3(currentPos.x + 0.5f, 0.5f, currentPos.y + 0.5f)); // Add the waypoint to the path
 
             // Calculate movement direction
             direction = new Vector2Int(
@@ -189,16 +199,13 @@ public class MeshGenerator : MonoBehaviour
         }
     }
 
-    // Flatten a 2x2 square of the grid by adjusting the heights of the vertices
     void FlattenGridSquare(int x, int z)
     {
-        // Flatten the 4 vertices of a 2x2 square
         vertices[z * (xSize + 1) + x].y = 1f;           // Bottom-left
         vertices[z * (xSize + 1) + (x + 1)].y = 1f;     // Bottom-right
         vertices[(z + 1) * (xSize + 1) + x].y = 1f;     // Top-left
         vertices[(z + 1) * (xSize + 1) + (x + 1)].y = 1f; // Top-right
 
-        // Mark the vertices as part of the flattened position
         pathMap[x, z] = true;
         pathMap[x + 1, z] = true;
         pathMap[x, z + 1] = true;
@@ -214,7 +221,6 @@ public class MeshGenerator : MonoBehaviour
         return pathMap[x, z];
     }
 
-    // Check if a given position is within a certain distance from the path
     bool IsNearPath(int x, int z, float maxDistance)
     {
         for (int dx = -Mathf.CeilToInt(maxDistance); dx <= Mathf.CeilToInt(maxDistance); dx++)
@@ -232,6 +238,31 @@ public class MeshGenerator : MonoBehaviour
         }
 
         return false;
+    }
+
+    void PlaceRandomObjects()
+    {
+        int numObjectsToPlace = 5; // You can customize the number of objects to place
+        int objectsPlaced = 0;
+
+        while (objectsPlaced < numObjectsToPlace)
+        {
+            // Randomly pick a location on the grid
+            int x = Random.Range(1, xSize - 1);
+            int z = Random.Range(1, zSize - 1);
+
+            if (!pathMap[x, z] && !flattenedPositions.Contains(new Vector3(x, 1f, z)))
+            {
+                // Pick a random object from the array
+                GameObject randomObject = randomObjects[Random.Range(0, randomObjects.Length)];
+
+                // Instantiate the object at the chosen position
+                Vector3 spawnPosition = new Vector3(x + 0.5f, 1f, z + 0.5f);
+                Instantiate(randomObject, spawnPosition, Quaternion.identity);
+
+                objectsPlaced++;
+            }
+        }
     }
 
     void UpdateMesh()

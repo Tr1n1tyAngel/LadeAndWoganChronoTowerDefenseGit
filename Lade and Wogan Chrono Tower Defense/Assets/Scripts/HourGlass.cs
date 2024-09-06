@@ -9,7 +9,7 @@ public class Hourglass : MonoBehaviour
     public float hourglassHealth = 100; // Object's health
     public float radius = 5f; // Radius to detect enemies
     public float damage = 10; // Damage dealt to enemies
-    public float damageInterval = 2f; // Time interval between damaging enemies
+    public float damageInterval = 5f; // Time interval between damaging enemies
     public Image healthbar;
 
     private void Start()
@@ -56,7 +56,7 @@ public class Hourglass : MonoBehaviour
     public void TakeDamage(float damage)
     {
         hourglassHealth -= damage;
-        healthbar.fillAmount = hourglassHealth / 100f;
+        healthbar.fillAmount = hourglassHealth / 500f;
         Debug.Log(gameObject.name + " took " + damage + " damage, health left: " + hourglassHealth);
 
         if (hourglassHealth <= 0)

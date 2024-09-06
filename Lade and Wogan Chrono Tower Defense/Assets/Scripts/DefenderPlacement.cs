@@ -10,11 +10,14 @@ public class DefenderPlacement : MonoBehaviour
     public Image defender1Indicator;          // The image that follows the mouse as a visual indicator
     public MeshGenerator meshGenerator;       // Reference to the MeshGenerator to access flattened positions
     public GameObject placementMarkerPrefab;  // Prefab for the visual marker (e.g., a transparent sphere)
+    public GameObject rangeIndicatorPrefab;   // Prefab for the range indicator
 
     private bool isPlacing = false;           // Tracks whether placement mode is active
     private List<GameObject> placementMarkers = new List<GameObject>();  // List to store active markers
     private int placedDefenders = 0;          // Counter to track how many defenders have been placed
     private int maxDefenders = 10;            // Maximum number of defenders to be placed
+
+    private GameObject rangeIndicator;        // The instantiated range indicator object
 
     void Start()
     {
@@ -48,6 +51,16 @@ public class DefenderPlacement : MonoBehaviour
             defender1Indicator.enabled = true;  // Show the selection indicator
             defender1Button.interactable = false;   // Disable the button during placement
 
+            // Instantiate the range indicator and set its scale based on the defender's attack range
+            if (rangeIndicatorPrefab != null)
+            {
+                rangeIndicator = Instantiate(rangeIndicatorPrefab, Vector3.zero, Quaternion.identity);
+                float attackRange = defender1PlacePrefab.GetComponent<DefenderBase>().attackRange;
+                float indicatorScale = attackRange * 2f; // Diameter based on the attack range
+                rangeIndicator.transform.localScale = new Vector3(indicatorScale, indicatorScale, 1f); // Rotate it appropriately
+                rangeIndicator.transform.localRotation = Quaternion.Euler(90f, 0f, 0f); // Rotate 90 degrees on X-axis
+            }
+
             // Show placement markers at the valid positions
             ShowPlacementMarkers();
         }
@@ -60,9 +73,30 @@ public class DefenderPlacement : MonoBehaviour
 
         // Adjust the indicator to be slightly to the top-right of the mouse cursor
         Vector3 offset = new Vector3(50f, 50f, 0f);  // You can adjust the offset values as needed
-
-        // Set the position of the indicator to the top-right of the mouse position
         defender1Indicator.transform.position = mousePos + offset;
+
+        // Update the position of the range indicator to follow the mouse cursor in world space
+        UpdateRangeIndicatorPosition();
+    }
+
+    // This function ensures that the range indicator follows the mouse and stays above the terrain
+    void UpdateRangeIndicatorPosition()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        // Check if the raycast hits anything
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+        {
+            // Get the point where the ray hits any surface (terrain or otherwise)
+            Vector3 worldPosition = hit.point;
+
+            // Offset the Y position slightly to ensure the indicator stays above the terrain
+            worldPosition.y += 0.1f; // Adjust the offset as needed to avoid clipping
+
+            // Set the position of the range indicator
+            rangeIndicator.transform.position = worldPosition;
+        }
     }
 
     // This function places the object at one of the valid positions
@@ -86,6 +120,7 @@ public class DefenderPlacement : MonoBehaviour
 
                     isPlacing = false;
                     defender1Indicator.enabled = false;  // Hide the indicator after placing
+                    Destroy(rangeIndicator);             // Destroy the range indicator after placement
                     HidePlacementMarkers();               // Hide the placement markers
 
                     placedDefenders++;  // Increase the placed defenders counter
