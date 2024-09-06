@@ -1,13 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Hourglass : MonoBehaviour
 {
-    public int hourglassHealth = 100; // Object's health
+    public float hourglassHealth = 100; // Object's health
     public float radius = 5f; // Radius to detect enemies
-    public int damage = 10; // Damage dealt to enemies
+    public float damage = 10; // Damage dealt to enemies
     public float damageInterval = 2f; // Time interval between damaging enemies
     public Image healthbar;
 
@@ -15,8 +16,16 @@ public class Hourglass : MonoBehaviour
     {
         // Start the damage dealing coroutine
         StartCoroutine(DamageEnemiesOverTime());
+        
     }
 
+    void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.K))
+        {
+            TakeDamage(5);
+        }
+    }
     // Coroutine that damages enemies within range every 2 seconds
     IEnumerator DamageEnemiesOverTime()
     {
@@ -44,7 +53,7 @@ public class Hourglass : MonoBehaviour
     }
     
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         hourglassHealth -= damage;
         healthbar.fillAmount = hourglassHealth / 100f;

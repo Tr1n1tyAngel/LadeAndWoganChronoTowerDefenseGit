@@ -16,12 +16,14 @@ public class MeshGenerator : MonoBehaviour
     public int seed;
 
     public GameObject objectToPlace; // Object to place at the center
-
     public int pathWidth = 1;  // Width of the paths
 
     public Material terrainMaterial; // Material with texture atlas (terrain + path)
 
     private bool[,] pathMap;  // 2D array to track path positions
+    public List<Vector3> flattenedPositions = new List<Vector3>();  // List of flattened positions for object placement
+    public int numberOfFlattenedPositions = 10; // Number of valid object placement positions
+    public float maxDistanceToPath = 5f; // Maximum distance to place towers near the path
 
     void Start()
     {
@@ -38,6 +40,7 @@ public class MeshGenerator : MonoBehaviour
 
         CreateShape();
         CreatePaths();  // Generate non-overlapping winding paths to the center
+        CreateFlattenedPositions();  // Create flattened positions for object placement
         UpdateMesh();
         PlaceObjectAtCenter(); // Place object at the center of the grid
     }
@@ -48,16 +51,13 @@ public class MeshGenerator : MonoBehaviour
         uvs = new Vector2[(xSize + 1) * (zSize + 1)];
         Random.InitState(seed);
 
-        int centerX = xSize / 2;
-        int centerZ = zSize / 2;
-
         int index = 0;
         for (int z = 0; z <= zSize; z++)
         {
             for (int x = 0; x <= xSize; x++)
             {
                 float y;
-                if ((x == centerX || x == centerX + 1) && (z == centerZ || z == centerZ + 1))
+                if (pathMap[x, z])
                 {
                     y = 0;
                 }
@@ -117,54 +117,32 @@ public class MeshGenerator : MonoBehaviour
 
     void CreateWindingPath(Vector2Int start, Vector2Int end)
     {
-        // Start from the starting point
         Vector2Int currentPos = start;
-
-        // A direction vector to store the general movement towards the center
         Vector2Int direction;
-
-        int maxAttempts = 1000; // Limit the number of direction changes to avoid infinite loops
+        int maxAttempts = 1000; // Limit to avoid infinite loops
         int attempts = 0;
 
-        // Keep moving towards the center with more random deviations
         while (currentPos != end && attempts < maxAttempts)
         {
             attempts++;
             FlattenSquare(currentPos.x, currentPos.y);
 
-            // Calculate a random deviation that increases the winding nature of the path
+            // Calculate movement direction
             direction = new Vector2Int(
                 end.x - currentPos.x > 0 ? 1 : (end.x - currentPos.x < 0 ? -1 : 0),
                 end.y - currentPos.y > 0 ? 1 : (end.y - currentPos.y < 0 ? -1 : 0)
             );
 
-            // Add more significant randomness to the path
-            if (Random.value > 0.4f)  // Increasing randomness
-            {
-                direction.x += Random.Range(-1, 2); // Deviation in x-axis
-            }
-            if (Random.value > 0.4f)  // Increasing randomness
-            {
-                direction.y += Random.Range(-1, 2); // Deviation in y-axis
-            }
+            if (Random.value > 0.4f) direction.x += Random.Range(-1, 2);
+            if (Random.value > 0.4f) direction.y += Random.Range(-1, 2);
 
             // Ensure the next move is not into a previously created path
             int nextX = Mathf.Clamp(currentPos.x + direction.x, 0, xSize);
             int nextZ = Mathf.Clamp(currentPos.y + direction.y, 0, zSize);
 
-            if (IsPathOccupied(nextX, nextZ))
-            {
-                // Adjust direction if necessary
-                direction = new Vector2Int(Random.Range(-1, 2), Random.Range(-1, 2));
-            }
+            if (IsPathOccupied(nextX, nextZ)) continue;
 
-            // Move to the next position
             currentPos = new Vector2Int(nextX, nextZ);
-        }
-
-        if (attempts >= maxAttempts)
-        {
-            Debug.LogWarning("Path generation stopped to avoid infinite loop.");
         }
     }
 
@@ -176,22 +154,59 @@ public class MeshGenerator : MonoBehaviour
             {
                 int newX = Mathf.Clamp(x + dx, 0, xSize);
                 int newZ = Mathf.Clamp(z + dz, 0, zSize);
-
                 int index = newZ * (xSize + 1) + newX;
-                vertices[index].y = 0;  // Flatten the square
 
-                // Adjust UVs for the path texture (use the right side of the texture atlas)
+                vertices[index].y = 0;
                 uvs[index] = new Vector2(0.5f + (float)newX / xSize * 0.5f, (float)newZ / zSize);
-
-                // Mark this square as part of a path
                 pathMap[newX, newZ] = true;
             }
         }
     }
 
+    void CreateFlattenedPositions()
+    {
+        int count = 0;
+        while (count < numberOfFlattenedPositions)
+        {
+            int x = Random.Range(1, xSize - 1);
+            int z = Random.Range(1, zSize - 1);
+
+            if (!pathMap[x, z] && !pathMap[x + 1, z] && !pathMap[x, z + 1] && !pathMap[x + 1, z + 1])
+            {
+                // Check if this position is near the path (within maxDistanceToPath)
+                if (IsNearPath(x, z, maxDistanceToPath))
+                {
+                    // Flatten the 2x2 area
+                    FlattenGridSquare(x, z);
+
+                    // Add the center of this flattened area as a possible placement position
+                    Vector3 centerPosition = new Vector3(x + 0.5f, 1f, z + 0.5f);
+                    flattenedPositions.Add(centerPosition);
+
+                    count++;
+                }
+            }
+        }
+    }
+
+    // Flatten a 2x2 square of the grid by adjusting the heights of the vertices
+    void FlattenGridSquare(int x, int z)
+    {
+        // Flatten the 4 vertices of a 2x2 square
+        vertices[z * (xSize + 1) + x].y = 1f;           // Bottom-left
+        vertices[z * (xSize + 1) + (x + 1)].y = 1f;     // Bottom-right
+        vertices[(z + 1) * (xSize + 1) + x].y = 1f;     // Top-left
+        vertices[(z + 1) * (xSize + 1) + (x + 1)].y = 1f; // Top-right
+
+        // Mark the vertices as part of the flattened position
+        pathMap[x, z] = true;
+        pathMap[x + 1, z] = true;
+        pathMap[x, z + 1] = true;
+        pathMap[x + 1, z + 1] = true;
+    }
+
     bool IsPathOccupied(int x, int z)
     {
-        // Check if the position is occupied by a path, and ensure the position is within bounds
         if (x < 0 || x > xSize || z < 0 || z > zSize)
         {
             return true;  // Treat out-of-bounds areas as occupied
@@ -199,13 +214,32 @@ public class MeshGenerator : MonoBehaviour
         return pathMap[x, z];
     }
 
+    // Check if a given position is within a certain distance from the path
+    bool IsNearPath(int x, int z, float maxDistance)
+    {
+        for (int dx = -Mathf.CeilToInt(maxDistance); dx <= Mathf.CeilToInt(maxDistance); dx++)
+        {
+            for (int dz = -Mathf.CeilToInt(maxDistance); dz <= Mathf.CeilToInt(maxDistance); dz++)
+            {
+                int checkX = Mathf.Clamp(x + dx, 0, xSize);
+                int checkZ = Mathf.Clamp(z + dz, 0, zSize);
+
+                if (pathMap[checkX, checkZ])
+                {
+                    return true;  // Found a nearby path
+                }
+            }
+        }
+
+        return false;
+    }
+
     void UpdateMesh()
     {
         mesh.Clear();
         mesh.vertices = vertices;
         mesh.triangles = triangles;
-        mesh.uv = uvs; // Apply UVs to the mesh
-
+        mesh.uv = uvs;  // Apply UVs to the mesh
         mesh.RecalculateNormals();
     }
 
@@ -222,7 +256,6 @@ public class MeshGenerator : MonoBehaviour
                                       vertices[(centerZ + 1) * (xSize + 1) + (centerX + 1)]) / 4;
 
             centerPosition.y += 1;
-
             Instantiate(objectToPlace, centerPosition, Quaternion.identity);
         }
     }
@@ -234,6 +267,13 @@ public class MeshGenerator : MonoBehaviour
             for (int i = 0; i < vertices.Length; i++)
             {
                 Gizmos.DrawSphere(vertices[i], .1f);
+            }
+
+            // Draw Gizmos for the flattened positions
+            Gizmos.color = Color.green;
+            foreach (var pos in flattenedPositions)
+            {
+                Gizmos.DrawSphere(pos, 0.2f);
             }
         }
     }
