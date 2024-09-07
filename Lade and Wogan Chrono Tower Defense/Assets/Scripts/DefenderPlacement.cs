@@ -11,6 +11,7 @@ public class DefenderPlacement : MonoBehaviour
     public MeshGenerator meshGenerator;       // Reference to the MeshGenerator to access flattened positions
     public GameObject placementMarkerPrefab;  // Prefab for the visual marker (e.g., a transparent sphere)
     public GameObject rangeIndicatorPrefab;   // Prefab for the range indicator
+    public Hourglass hourglass;               // Reference to the Hourglass script
 
     private bool isPlacing = false;           // Tracks whether placement mode is active
     private List<GameObject> placementMarkers = new List<GameObject>();  // List to store active markers
@@ -18,6 +19,8 @@ public class DefenderPlacement : MonoBehaviour
     private int maxDefenders = 10;            // Maximum number of defenders to be placed
 
     private GameObject rangeIndicator;        // The instantiated range indicator object
+    private List<Vector3> defenderPositions = new List<Vector3>();  // List to store defender positions
+
 
     void Start()
     {
@@ -110,18 +113,29 @@ public class DefenderPlacement : MonoBehaviour
         {
             foreach (Vector3 position in meshGenerator.flattenedPositions)
             {
-                if (Vector3.Distance(hit.point, position) < 0.5f)
+                // Check if a defender is already placed at this position
+                if (Vector3.Distance(hit.point, position) < 0.5f && !IsPositionOccupied(position))
                 {
                     // Adjust the Y position of the defender to be placed 1 unit above the ground
                     Vector3 adjustedPosition = new Vector3(position.x, position.y + 1f, position.z);
 
                     // Instantiate the defender at the adjusted position
-                    Instantiate(defender1PlacePrefab, adjustedPosition, Quaternion.identity);
+                    GameObject placedDefender = Instantiate(defender1PlacePrefab, adjustedPosition, Quaternion.identity);
+
+                    // If defender is placed, reduce health from the hourglass
+                    if (placedDefender.GetComponent<Defender1>() != null)
+                    {
+                        hourglass.ReduceHealthForDefenderPlacement(30f);
+                        Debug.Log("DefenderHealthTaken");
+                    }
+
+                    // Mark the position as occupied
+                    defenderPositions.Add(position);
 
                     isPlacing = false;
                     defender1Indicator.enabled = false;  // Hide the indicator after placing
                     Destroy(rangeIndicator);             // Destroy the range indicator after placement
-                    HidePlacementMarkers();               // Hide the placement markers
+                    HidePlacementMarkers();              // Hide the placement markers
 
                     placedDefenders++;  // Increase the placed defenders counter
 
@@ -140,7 +154,7 @@ public class DefenderPlacement : MonoBehaviour
                 }
             }
 
-            Debug.Log("No valid placement position found.");
+            Debug.Log("No valid or available placement position found.");
         }
     }
 
@@ -164,5 +178,18 @@ public class DefenderPlacement : MonoBehaviour
         }
 
         placementMarkers.Clear();  // Clear the list of markers
+    }
+
+    // This function checks if a position is already occupied by another defender
+    bool IsPositionOccupied(Vector3 position)
+    {
+        foreach (Vector3 placedPosition in defenderPositions)
+        {
+            if (Vector3.Distance(placedPosition, position) < 0.5f)
+            {
+                return true; // Position is occupied
+            }
+        }
+        return false;
     }
 }

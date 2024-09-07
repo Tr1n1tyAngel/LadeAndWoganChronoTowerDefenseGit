@@ -13,7 +13,7 @@ public class DefenderBase : MonoBehaviour
 
     public void Start()
     {
-        
+        // Any specific logic for the defender can go here
     }
 
     // Take damage function (called when the defender is attacked)
@@ -46,7 +46,6 @@ public class DefenderBase : MonoBehaviour
         Destroy(gameObject);
     }
 
-    // This can be overridden in subclasses if defenders have unique attack behaviors
     public virtual void Update()
     {
         // Find enemies in range and attack them

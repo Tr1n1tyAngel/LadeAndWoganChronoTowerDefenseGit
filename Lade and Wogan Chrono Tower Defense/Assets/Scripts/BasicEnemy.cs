@@ -10,6 +10,7 @@ public class BasicEnemy : MonoBehaviour
     public bool canAttack = true;     // Whether this enemy can attack
     public float attackRange = 1f;    // Attack range for detecting defenders
     public MeshGenerator meshGenerator; // Reference to MeshGenerator
+    public Hourglass hourglass;
 
     private List<Vector3> waypoints = new List<Vector3>(); // List of waypoints for this enemy
     private int currentWaypointIndex = 0; // The current waypoint the enemy is moving towards
@@ -40,7 +41,7 @@ public class BasicEnemy : MonoBehaviour
     // Enemy dies when health reaches 0
     protected virtual void Die()
     {
-        Debug.Log(gameObject.name + " has died!");
+        Debug.Log(gameObject.name + " has died!");   
         Destroy(gameObject);
     }
 

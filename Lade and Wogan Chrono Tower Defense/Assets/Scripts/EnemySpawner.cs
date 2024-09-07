@@ -8,6 +8,7 @@ public class EnemySpawner : MonoBehaviour
     public MeshGenerator meshGenerator;    // Reference to the MeshGenerator in the scene
     public float spawnInterval = 3f;
 
+ 
     private void Start()
     {
         // Start spawning enemies after ensuring that pathStartPoints have been initialized
@@ -38,7 +39,7 @@ public class EnemySpawner : MonoBehaviour
             {
                 enemyScript.meshGenerator = meshGenerator; // Assign the MeshGenerator to the enemy
             }
-
+            
             // Wait for the specified spawn interval before spawning another enemy
             yield return new WaitForSeconds(spawnInterval);
         }

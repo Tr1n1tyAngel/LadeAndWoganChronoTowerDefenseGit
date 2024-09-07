@@ -12,6 +12,7 @@ public class Defender1 : DefenderBase
         attackDamage = 15f;       // Override damage for Defender1
         attackRange = 5f;        // Override attack range for Defender1
         attackCooldown = 1.5f;   // Override cooldown for Defender1
+        
     }
 
     // Override the base class update logic for unique behavior

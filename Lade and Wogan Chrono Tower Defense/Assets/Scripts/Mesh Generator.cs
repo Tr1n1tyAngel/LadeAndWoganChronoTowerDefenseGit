@@ -15,7 +15,7 @@ public class MeshGenerator : MonoBehaviour
     public bool useRandomSeed = true;
     public int seed;
 
-    public GameObject objectToPlace; // Object to place at the center
+    
     public int pathWidth = 1;  // Width of the paths
     public Material terrainMaterial; // Material with texture atlas (terrain + path)
     public GameObject[] randomObjects;  // Array of random objects to place on the terrain
@@ -47,7 +47,7 @@ public class MeshGenerator : MonoBehaviour
         CreateFlattenedPositions();  // Create flattened positions for object placement
         PlaceRandomObjects(); // Place random objects on the mesh
         UpdateMesh();
-        PlaceObjectAtCenter(); // Place object at the center of the grid
+        
     }
 
     void CreateShape()
@@ -274,22 +274,7 @@ public class MeshGenerator : MonoBehaviour
         mesh.RecalculateNormals();
     }
 
-    void PlaceObjectAtCenter()
-    {
-        if (objectToPlace != null)
-        {
-            int centerX = xSize / 2;
-            int centerZ = zSize / 2;
-
-            Vector3 centerPosition = (vertices[centerZ * (xSize + 1) + centerX] +
-                                      vertices[centerZ * (xSize + 1) + (centerX + 1)] +
-                                      vertices[(centerZ + 1) * (xSize + 1) + centerX] +
-                                      vertices[(centerZ + 1) * (xSize + 1) + (centerX + 1)]) / 4;
-
-            centerPosition.y += 1;
-            Instantiate(objectToPlace, centerPosition, Quaternion.identity);
-        }
-    }
+    
 
     public void OnDrawGizmos()
     {
