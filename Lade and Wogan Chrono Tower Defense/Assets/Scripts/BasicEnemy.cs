@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class BasicEnemy : MonoBehaviour
 {
-    public float enemyHealth = 50;    // Health of the enemy
+    public float enemyHealth = 50;
+    public float enemyMaxHealth = 50;// Health of the enemy
     public float movementSpeed = 3f;  // Speed of the enemy
     public float damage = 10f;        // Damage dealt to the defender
     public bool canAttack = true;     // Whether this enemy can attack
@@ -16,7 +17,12 @@ public class BasicEnemy : MonoBehaviour
     private int currentWaypointIndex = 0; // The current waypoint the enemy is moving towards
     protected DefenderBase currentTarget; // Current target in range
     protected Hourglass currentTargetH;
+    public WorldSpaceHealthBar worldSpaceHealthBar;
 
+    private void Start()
+    {
+        worldSpaceHealthBar = GetComponentInChildren<WorldSpaceHealthBar>();
+    }
     public void InitializePath(int pathIndex)
     {
         // Initialize the waypoints based on the chosen path index
@@ -30,6 +36,7 @@ public class BasicEnemy : MonoBehaviour
     public virtual void TakeDamage(float damage)
     {
         enemyHealth -= damage;
+        worldSpaceHealthBar.UpdateHealthBar(enemyHealth, enemyMaxHealth);
         Debug.Log(gameObject.name + " took " + damage + " damage, health left: " + enemyHealth);
 
         if (enemyHealth <= 0)

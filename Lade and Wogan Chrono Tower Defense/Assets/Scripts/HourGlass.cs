@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Hourglass : MonoBehaviour
@@ -98,6 +99,7 @@ public class Hourglass : MonoBehaviour
     {
         Debug.Log(gameObject.name + " has died!");
         Destroy(gameObject);
+        SceneManager.LoadScene("GameOver");
     }
 
     // Optional: Visualize the radius in the Scene view

@@ -16,11 +16,9 @@ public class DefenderPlacement : MonoBehaviour
     private bool isPlacing = false;           // Tracks whether placement mode is active
     private List<GameObject> placementMarkers = new List<GameObject>();  // List to store active markers
     private int placedDefenders = 0;          // Counter to track how many defenders have been placed
-    private int maxDefenders = 10;            // Maximum number of defenders to be placed
+    public int maxDefenders = 10;             // Maximum number of defenders to be placed
 
     private GameObject rangeIndicator;        // The instantiated range indicator object
-    private List<Vector3> defenderPositions = new List<Vector3>();  // List to store defender positions
-
 
     void Start()
     {
@@ -31,6 +29,9 @@ public class DefenderPlacement : MonoBehaviour
 
     void Update()
     {
+        // Update the number of defenders in the scene
+        UpdateDefenderCount();
+
         // Update the position of the selection indicator to follow the mouse
         if (isPlacing)
         {
@@ -47,7 +48,7 @@ public class DefenderPlacement : MonoBehaviour
     // This function is called when the player clicks the button to start placing the object
     void ActivatePlacementMode()
     {
-        // Only allow placement if less than 10 defenders have been placed
+        // Only allow placement if less than maxDefenders have been placed
         if (placedDefenders < maxDefenders)
         {
             isPlacing = true;
@@ -113,49 +114,57 @@ public class DefenderPlacement : MonoBehaviour
         {
             foreach (Vector3 position in meshGenerator.flattenedPositions)
             {
-                // Check if a defender is already placed at this position
-                if (Vector3.Distance(hit.point, position) < 0.5f && !IsPositionOccupied(position))
+                // Check if the raycast hit a valid placement area
+                if (Vector3.Distance(hit.point, position) < 0.5f)
                 {
-                    // Adjust the Y position of the defender to be placed 1 unit above the ground
-                    Vector3 adjustedPosition = new Vector3(position.x, position.y + 1f, position.z);
-
-                    // Instantiate the defender at the adjusted position
-                    GameObject placedDefender = Instantiate(defender1PlacePrefab, adjustedPosition, Quaternion.identity);
-
-                    // If defender is placed, reduce health from the hourglass
-                    if (placedDefender.GetComponent<Defender1>() != null)
+                    // Check for collision with other defenders in the position
+                    if (!IsCollidingWithDefender(position))
                     {
-                        hourglass.ReduceHealthForDefenderPlacement(30f);
-                        Debug.Log("DefenderHealthTaken");
-                    }
+                        // Adjust the Y position of the defender to be placed 1 unit above the ground
+                        Vector3 adjustedPosition = new Vector3(position.x, position.y + 1f, position.z);
 
-                    // Mark the position as occupied
-                    defenderPositions.Add(position);
+                        // Instantiate the defender at the adjusted position
+                        GameObject placedDefender = Instantiate(defender1PlacePrefab, adjustedPosition, Quaternion.identity);
 
-                    isPlacing = false;
-                    defender1Indicator.enabled = false;  // Hide the indicator after placing
-                    Destroy(rangeIndicator);             // Destroy the range indicator after placement
-                    HidePlacementMarkers();              // Hide the placement markers
+                        // If defender is placed, reduce health from the hourglass
+                        if (placedDefender.GetComponent<Defender1>() != null)
+                        {
+                            hourglass.ReduceHealthForDefenderPlacement(30f);
+                            Debug.Log("DefenderHealthTaken");
+                        }
 
-                    placedDefenders++;  // Increase the placed defenders counter
+                        isPlacing = false;
+                        defender1Indicator.enabled = false;  // Hide the indicator after placing
+                        Destroy(rangeIndicator);             // Destroy the range indicator after placement
+                        HidePlacementMarkers();              // Hide the placement markers
 
-                    // Check if the maximum number of defenders has been placed
-                    if (placedDefenders >= maxDefenders)
-                    {
-                        defender1Button.interactable = false;  // Disable the button permanently
-                        Debug.Log("All defender positions are filled.");
+                        return;
                     }
                     else
                     {
-                        defender1Button.interactable = true;   // Re-enable the button if more placements are allowed
+                        Debug.Log("Cannot place defender here. A defender is already present.");
                     }
-
-                    return;
                 }
             }
 
             Debug.Log("No valid or available placement position found.");
         }
+    }
+
+    // Collision check to see if the position overlaps with an existing defender
+    bool IsCollidingWithDefender(Vector3 position)
+    {
+        Collider[] hitColliders = Physics.OverlapSphere(position, 0.5f); // Adjust the radius if needed
+
+        foreach (Collider hitCollider in hitColliders)
+        {
+            if (hitCollider.CompareTag("Defender"))
+            {
+                return true;  // Defender already in this position
+            }
+        }
+
+        return false;  // No defenders in the position
     }
 
     // Show visual markers for the valid flattened positions
@@ -180,16 +189,20 @@ public class DefenderPlacement : MonoBehaviour
         placementMarkers.Clear();  // Clear the list of markers
     }
 
-    // This function checks if a position is already occupied by another defender
-    bool IsPositionOccupied(Vector3 position)
+    // Dynamically update the number of placed defenders
+    void UpdateDefenderCount()
     {
-        foreach (Vector3 placedPosition in defenderPositions)
+        placedDefenders = FindObjectsOfType<Defender1>().Length;
+
+        // Check if the maximum number of defenders has been placed
+        if (placedDefenders >= maxDefenders)
         {
-            if (Vector3.Distance(placedPosition, position) < 0.5f)
-            {
-                return true; // Position is occupied
-            }
+            defender1Button.interactable = false;  // Disable the button when the limit is reached
+            Debug.Log("All defender positions are filled.");
         }
-        return false;
+        else
+        {
+            defender1Button.interactable = true;   // Re-enable the button if more placements are allowed
+        }
     }
 }

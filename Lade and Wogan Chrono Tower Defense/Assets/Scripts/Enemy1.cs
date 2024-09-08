@@ -8,9 +8,11 @@ public class Enemy1 : BasicEnemy
     {
         // Set Enemy1 specific properties
         enemyHealth = 50f;         // Less health but faster
+        enemyMaxHealth = 50f;
         movementSpeed = 3f;        // Faster movement speed
         damage = 10f;              // Less damage
         attackRange = 8f;          // Override attack range
+        worldSpaceHealthBar = GetComponentInChildren<WorldSpaceHealthBar>();
 
         // Find the nearest path based on the enemy's spawn position
         int pathIndex = GetNearestPathIndex();

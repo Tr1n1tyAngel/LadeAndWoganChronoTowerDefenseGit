@@ -4,16 +4,17 @@ using UnityEngine;
 
 public class DefenderBase : MonoBehaviour
 {
-    public float defenderHealth = 100;    // Health of the defender
-    public float attackDamage = 10;       // Damage dealt to enemies
+    public float defenderHealth = 100f;
+    public float defenderMaxHealth = 100f;// Health of the defender
+    public float attackDamage = 10f;       // Damage dealt to enemies
     public float attackRange = 5f;        // Range within which it can attack
     public float attackCooldown = 2f;     // Time between attacks
 
     public float lastAttackTime = 0f;    // Track the last time the defender attacked
-
+    public WorldSpaceHealthBar worldSpaceHealthBar;
     public void Start()
     {
-        // Any specific logic for the defender can go here
+        worldSpaceHealthBar = GetComponentInChildren<WorldSpaceHealthBar>();
     }
 
     // Take damage function (called when the defender is attacked)
@@ -21,7 +22,7 @@ public class DefenderBase : MonoBehaviour
     {
         defenderHealth -= damage;
         Debug.Log(gameObject.name + " took " + damage + " damage, health left: " + defenderHealth);
-
+        worldSpaceHealthBar.UpdateHealthBar(defenderHealth, defenderMaxHealth);
         if (defenderHealth <= 0)
         {
             Die();

@@ -9,9 +9,11 @@ public class Defender1 : DefenderBase
     void Start()
     {
         defenderHealth = 100f;    // Override health for Defender1
+        defenderMaxHealth = 100f;
         attackDamage = 15f;       // Override damage for Defender1
         attackRange = 5f;        // Override attack range for Defender1
         attackCooldown = 1.5f;   // Override cooldown for Defender1
+        worldSpaceHealthBar = GetComponentInChildren<WorldSpaceHealthBar>();
         
     }
 
