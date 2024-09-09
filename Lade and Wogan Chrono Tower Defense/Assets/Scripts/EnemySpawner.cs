@@ -5,42 +5,38 @@ using UnityEngine;
 public class EnemySpawner : MonoBehaviour
 {
     public GameObject enemyPrefab;
-    public MeshGenerator meshGenerator;    // Reference to the MeshGenerator in the scene
+    public MeshGenerator meshGenerator;
+
     public float spawnInterval = 3f;
 
  
     private void Start()
     {
-        // Start spawning enemies after ensuring that pathStartPoints have been initialized
         StartCoroutine(SpawnEnemies());
     }
-
+    // The enemy spawning method which spawns an enemy every few seconds
     IEnumerator SpawnEnemies()
     {
-        // Wait until the meshGenerator has path start points available
+        // Makes sure that the mesh has been generated so enemies can spawn
         while (meshGenerator.pathStartPoints == null || meshGenerator.pathStartPoints.Count == 0)
         {
-            Debug.LogWarning("Waiting for pathStartPoints to be initialized.");
-            yield return null;  // Wait for the next frame
+            yield return null;
         }
 
-        // Now we can spawn enemies
+        //randomly picks one of the paths, then spawns an enemy at that starting point, then assigns any information needed to the enemy
         while (true)
         {
-            // Randomly pick one of the path start points from the MeshGenerator
+           
             int randomIndex = Random.Range(0, meshGenerator.pathStartPoints.Count);
 
-            // Instantiate the enemy prefab at the randomly selected start point
             GameObject enemy = Instantiate(enemyPrefab, meshGenerator.pathStartPoints[randomIndex], Quaternion.identity);
 
-            // Get the enemy script and assign the MeshGenerator reference
             BasicEnemy enemyScript = enemy.GetComponent<BasicEnemy>();
             if (enemyScript != null)
             {
-                enemyScript.meshGenerator = meshGenerator; // Assign the MeshGenerator to the enemy
+                enemyScript.meshGenerator = meshGenerator; 
             }
-            
-            // Wait for the specified spawn interval before spawning another enemy
+
             yield return new WaitForSeconds(spawnInterval);
         }
     }

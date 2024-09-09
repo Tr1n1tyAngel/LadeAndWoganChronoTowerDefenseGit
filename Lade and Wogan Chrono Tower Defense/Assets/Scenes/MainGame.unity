@@ -173,9 +173,9 @@ MonoBehaviour:
   defender1PlacePrefab: {fileID: 367255446675730370, guid: 11f67e76f6cf54947b41c882e8a5929d, type: 3}
   defender1Button: {fileID: 1419279871}
   defender1Indicator: {fileID: 44932503}
-  meshGenerator: {fileID: 1838571900}
   placementMarkerPrefab: {fileID: 5856652880959616856, guid: 3feea5bc2d5f54a4e9e1e73d3735e0c9, type: 3}
   rangeIndicatorPrefab: {fileID: 6089041100230074798, guid: 870b0bdd37335cf4dbc067c946ff6618, type: 3}
+  meshGenerator: {fileID: 1838571900}
   hourglass: {fileID: 1543347719017434338}
   maxDefenders: 10
 --- !u!114 &1436524
@@ -205,7 +205,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63fb893ef4961fd46b5ab9cd05602973, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pauseMenuUI: {fileID: 883432464}
+  pauseCanvas: {fileID: 883432464}
 --- !u!1 &44932502
 GameObject:
   m_ObjectHideFlags: 0
@@ -1259,7 +1259,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1419279872}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1436523}
+        m_TargetAssemblyTypeName: DefenderPlacement, Assembly-CSharp
+        m_MethodName: ActivatePlacementMode
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1419279872
 MonoBehaviour:
   m_ObjectHideFlags: 0

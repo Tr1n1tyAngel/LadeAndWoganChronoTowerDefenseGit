@@ -8,13 +8,12 @@ public class WorldSpaceHealthBar : MonoBehaviour
     [SerializeField] private Slider slider;
     [SerializeField]  private Camera camera;
     
-    // Start is called before the first frame update
+    //takes in the health values of the object the health bar is on and changes the sliders value
     public void UpdateHealthBar(float currentHealth, float maxHealth)
     {
         slider.value =  currentHealth / maxHealth;
     }
-
-    // Update is called once per frame
+    //changes the rotation of the health bar to be facing the camera
     void Update()
     {
         transform.rotation = Camera.main.transform.rotation;

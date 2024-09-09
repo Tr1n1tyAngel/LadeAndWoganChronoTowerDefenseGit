@@ -4,66 +4,64 @@ using UnityEngine;
 
 public class Defender1 : DefenderBase
 {
-    private BasicEnemy currentTarget;  // Store the current enemy being targeted
+    private BasicEnemy currentTarget;  
 
     void Start()
     {
-        defenderHealth = 100f;    // Override health for Defender1
+        //defender stats
+        defenderHealth = 100f;    
         defenderMaxHealth = 100f;
-        attackDamage = 15f;       // Override damage for Defender1
-        attackRange = 5f;        // Override attack range for Defender1
-        attackCooldown = 1.5f;   // Override cooldown for Defender1
+        attackDamage = 15f;       
+        attackRange = 5f;        
+        attackCooldown = 1.5f;   
+        //defender health bar
         worldSpaceHealthBar = GetComponentInChildren<WorldSpaceHealthBar>();
         
     }
 
-    // Override the base class update logic for unique behavior
     public override void Update()
     {
-        // If we have a current target, check if it's still in range and alive
+        // Looks for a target, if that target is dead or out of range looks for another one 
         if (currentTarget != null)
         {
-            // If the target is out of range or dead, clear the current target
+            
             if (Vector3.Distance(transform.position, currentTarget.transform.position) > attackRange || currentTarget.enemyHealth <= 0)
             {
-                currentTarget = null;  // Clear the target and search for a new one
+                currentTarget = null;  
             }
         }
 
-        // If we don't have a target, find a new one
         if (currentTarget == null)
         {
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, attackRange);
             foreach (var hitCollider in hitColliders)
             {
-                // Find the first valid enemy
                 if (hitCollider.CompareTag("Enemy"))
                 {
                     BasicEnemy enemy = hitCollider.GetComponent<BasicEnemy>();
                     if (enemy != null)
                     {
-                        currentTarget = enemy;  // Set the first enemy in range as the target
+                        currentTarget = enemy; 
                         break;
                     }
                 }
             }
         }
 
-        // If we have a target, attack it
+
         if (currentTarget != null)
         {
-            AttackEnemy(currentTarget);  // Attack the current target
+            AttackEnemy(currentTarget); 
         }
     }
 
-    // Override the attack logic to focus on the current target
+    // Attack logic for the defender
     public override void AttackEnemy(BasicEnemy enemy)
     {
         if (Time.time >= lastAttackTime + attackCooldown)
         {
-            Debug.Log(gameObject.name + " is attacking " + enemy.gameObject.name);
             enemy.TakeDamage(attackDamage);
-            lastAttackTime = Time.time; // Reset the cooldown timer
+            lastAttackTime = Time.time;
         }
     }
 }

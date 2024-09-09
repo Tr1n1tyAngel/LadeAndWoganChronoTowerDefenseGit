@@ -4,40 +4,44 @@ using UnityEngine;
 
 public class BasicEnemy : MonoBehaviour
 {
+    //base enemy stats
     public float enemyHealth = 50;
-    public float enemyMaxHealth = 50;// Health of the enemy
-    public float movementSpeed = 3f;  // Speed of the enemy
-    public float damage = 10f;        // Damage dealt to the defender
-    public bool canAttack = true;     // Whether this enemy can attack
-    public float attackRange = 1f;    // Attack range for detecting defenders
-    public MeshGenerator meshGenerator; // Reference to MeshGenerator
+    public float enemyMaxHealth = 50;
+    public float movementSpeed = 3f;  
+    public float damage = 10f;        
+    public bool canAttack = true;     
+    public float attackRange = 1f;
+    
+    //references to other scripts
+    public MeshGenerator meshGenerator; 
     public Hourglass hourglass;
-
-    private List<Vector3> waypoints = new List<Vector3>(); // List of waypoints for this enemy
-    private int currentWaypointIndex = 0; // The current waypoint the enemy is moving towards
-    protected DefenderBase currentTarget; // Current target in range
+    protected DefenderBase currentTarget; 
     protected Hourglass currentTargetH;
     public WorldSpaceHealthBar worldSpaceHealthBar;
+
+    //enemy waypoints for them to move along the path
+    private List<Vector3> waypoints = new List<Vector3>(); 
+    private int currentWaypointIndex = 0; 
+    
 
     private void Start()
     {
         worldSpaceHealthBar = GetComponentInChildren<WorldSpaceHealthBar>();
     }
+    //initializes the path depending on which path is chosen upon enemy spawn
     public void InitializePath(int pathIndex)
     {
-        // Initialize the waypoints based on the chosen path index
         if (meshGenerator != null && meshGenerator.pathWaypoints.ContainsKey(pathIndex))
         {
             waypoints = meshGenerator.pathWaypoints[pathIndex];
         }
     }
 
-    // Take damage function (called when attacked by a defender)
+
     public virtual void TakeDamage(float damage)
     {
         enemyHealth -= damage;
         worldSpaceHealthBar.UpdateHealthBar(enemyHealth, enemyMaxHealth);
-        Debug.Log(gameObject.name + " took " + damage + " damage, health left: " + enemyHealth);
 
         if (enemyHealth <= 0)
         {
@@ -45,14 +49,12 @@ public class BasicEnemy : MonoBehaviour
         }
     }
 
-    // Enemy dies when health reaches 0
     protected virtual void Die()
-    {
-        Debug.Log(gameObject.name + " has died!");   
+    {  
         Destroy(gameObject);
     }
 
-    // Enemy movement logic
+    // This is the logic for enemy movement
     public virtual void MoveAlongPath()
     {
         if (waypoints.Count == 0 || currentWaypointIndex >= waypoints.Count)
@@ -62,35 +64,35 @@ public class BasicEnemy : MonoBehaviour
         Vector3 direction = (targetPosition - transform.position).normalized;
         transform.Translate(direction * movementSpeed * Time.deltaTime, Space.World);
 
-        // If we reach the current waypoint, move to the next one
+        // If the current waypoint is reached move to the next one
         if (Vector3.Distance(transform.position, targetPosition) < 0.2f)
         {
             currentWaypointIndex++;
         }
     }
 
-    // Method to find defenders in attack range
+    // This finds if a defender tower is in range and then focuses on the closest one until it is either out of range or dead before switching to the next one
     public virtual void DetectDefendersInRange()
     {
         if (currentTarget == null || currentTarget.defenderHealth <= 0)
         {
-            FindNewTarget();  // Find a new defender to attack
+            FindNewTarget();  
         }
         else
         {
-            AttackTarget();  // Continue attacking the current defender
+            AttackTarget();  
         }
         if (currentTargetH == null || currentTargetH.hourglassHealth <= 0)
         {
-            FindNewTarget();  // Find a new defender to attack
+            FindNewTarget();  
         }
         else
         {
-            AttackTarget();  // Continue attacking the current defender
+            AttackTarget();  
         }
     }
 
-    // Method to attack the current target
+    // Attacks the current target
     protected virtual void AttackTarget()
     {
         if (currentTarget != null)
@@ -101,7 +103,7 @@ public class BasicEnemy : MonoBehaviour
                 {
                     currentTarget.TakeDamage(damage);
                     canAttack = false;
-                    Invoke(nameof(ResetAttack), 1f); // Adjust attack cooldown
+                    Invoke(nameof(ResetAttack), 1f); 
                 }
             }
         }
@@ -113,22 +115,22 @@ public class BasicEnemy : MonoBehaviour
                 {
                     currentTargetH.TakeDamage(damage * 0.5f);
                     canAttack = false;
-                    Invoke(nameof(ResetAttack), 1f); // Adjust attack cooldown
+                    Invoke(nameof(ResetAttack), 1f);
                 }
             }
         }
     }
 
-    // Reset the attack cooldown
+    // Resets the attack cooldown
     protected void ResetAttack()
     {
         canAttack = true;
     }
 
-    // Find a new target to attack
+    // Once a target is dead or out of range the enemy must look for a new one
     protected void FindNewTarget()
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, attackRange);  // Adjust detection range
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, attackRange);  
         foreach (var hitCollider in hitColliders)
         {
             if (hitCollider.CompareTag("Defender"))
@@ -136,7 +138,7 @@ public class BasicEnemy : MonoBehaviour
                 currentTarget = hitCollider.GetComponent<DefenderBase>();
                 if (currentTarget != null && currentTarget.defenderHealth > 0)
                 {
-                    break;  // Focus on one defender at a time
+                    break;  
                 }
             }
             if (hitCollider.CompareTag("HourGlass"))
@@ -144,7 +146,7 @@ public class BasicEnemy : MonoBehaviour
                 currentTargetH = hitCollider.GetComponent<Hourglass>();
                 if (currentTargetH != null && currentTargetH.hourglassHealth > 0)
                 {
-                    break;  // Focus on one defender at a time
+                    break;  
                 }
             }
         }
@@ -152,10 +154,7 @@ public class BasicEnemy : MonoBehaviour
 
     public virtual void Update()
     {
-        // Move along the path
         MoveAlongPath();
-
-        // Check for defenders in range
         DetectDefendersInRange();
     }
 }

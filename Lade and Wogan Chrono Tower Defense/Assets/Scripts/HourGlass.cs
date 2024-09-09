@@ -8,75 +8,70 @@ using UnityEngine.UI;
 
 public class Hourglass : MonoBehaviour
 {
-    public float hourglassHealth = 100; // Object's health
-    public float radius = 5f; // Radius to detect enemies
-    public float damage = 10; // Damage dealt to enemies
-    public float damageInterval = 5f; // Time interval between damaging enemies
+    //hourglass stats
+    public float hourglassHealth = 100; 
+    public float radius = 5f; 
+    public float damage = 10; 
+    public float damageInterval = 5f; 
+
+    //UI elements used by the hourglass
     public Image healthbar;
-    public TextMeshProUGUI healthText; // Reference to the UI Text component
+    public TextMeshProUGUI healthText; 
 
     private void Start()
     {
-        // Start the damage dealing coroutine
         StartCoroutine(DamageEnemiesOverTime());
-        UpdateHealthUI(); // Initialize the health UI text
+        UpdateHealthUI(); 
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            TakeDamage(5);
-        }
+
     }
 
-    // Coroutine that damages enemies within range every X seconds
+    //Damage is done to enemies within a radius every few seconds
     IEnumerator DamageEnemiesOverTime()
     {
-        while (hourglassHealth > 0) // As long as the object has health
+        while (hourglassHealth > 0) 
         {
-            // Find all colliders within the specified radius
+            
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, radius);
 
             foreach (Collider hitCollider in hitColliders)
             {
                 if (hitCollider.CompareTag("Enemy"))
                 {
-                    // Get the Enemy component (assuming enemies have a health script)
+                    
                     BasicEnemy enemy = hitCollider.GetComponent<BasicEnemy>();
                     if (enemy != null)
                     {
-                        enemy.TakeDamage(damage); // Apply damage to the enemy
+                        enemy.TakeDamage(damage);
                     }
                 }
             }
 
-            // Wait for the specified interval before damaging again
             yield return new WaitForSeconds(damageInterval);
         }
     }
 
+    //hourglass takes damage and displays it on the healthbar in visual and text 
     public void TakeDamage(float damage)
     {
         hourglassHealth -= damage;
-        healthbar.fillAmount = hourglassHealth / 500f;
-        Debug.Log(gameObject.name + " took " + damage + " damage, health left: " + hourglassHealth);
-
-        UpdateHealthUI(); // Update the health UI text when damage is taken
-
+        healthbar.fillAmount = hourglassHealth / 500f; 
+        UpdateHealthUI(); 
         if (hourglassHealth <= 0)
         {
             Die();
         }
     }
 
+    //for every defender that is placed it must reduce a certain amount of the hourglass health
     public void ReduceHealthForDefenderPlacement(float healthCost)
     {
         hourglassHealth -= healthCost;
         healthbar.fillAmount = hourglassHealth / 500f;
-        Debug.Log("Hourglass health reduced by " + healthCost + " due to defender placement.");
-
-        UpdateHealthUI(); // Update the health UI text when health is reduced
+        UpdateHealthUI(); 
     }
 
     // Method to restore health when an enemy is killed
@@ -84,9 +79,7 @@ public class Hourglass : MonoBehaviour
     {
         hourglassHealth += healthRestored;
         healthbar.fillAmount = hourglassHealth / 500f;
-        Debug.Log("Hourglass restored by " + healthRestored + " from enemy death.");
-
-        UpdateHealthUI(); // Update the health UI text when health is restored
+        UpdateHealthUI(); 
     }
 
     // Update the UI Text with the current health
@@ -95,14 +88,14 @@ public class Hourglass : MonoBehaviour
         healthText.text = "" +hourglassHealth;
     }
 
+    //when the hourglass is out of health load the game over scene
     void Die()
     {
-        Debug.Log(gameObject.name + " has died!");
         Destroy(gameObject);
         SceneManager.LoadScene("GameOver");
     }
 
-    // Optional: Visualize the radius in the Scene view
+    //shows the hourglass radius only in scene view
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;

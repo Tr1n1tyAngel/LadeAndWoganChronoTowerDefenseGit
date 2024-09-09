@@ -6,20 +6,18 @@ using UnityEngine.UI;
 
     public class PauseMenu : MonoBehaviour
     {
-        public static bool GameIsPaused = false; // Tracks whether the game is currently paused
-        public GameObject pauseMenuUI;           // Reference to the Pause Menu UI panel
+        public static bool GameIsPaused = false; 
+        public GameObject pauseCanvas;           
 
-    private Canvas[] allCanvases;            // Array to hold references to all canvases in the scene
+    private Canvas[] allCanvases;            
 
     void Start()
     {
-        // Find all canvases in the scene at the start
         allCanvases = FindObjectsOfType<Canvas>();
     }
 
     void Update()
         {
-            // Check if the player presses the escape key to toggle the pause menu
             if (Input.GetKeyDown(KeyCode.Escape))
             {
                 if (GameIsPaused)
@@ -33,43 +31,39 @@ using UnityEngine.UI;
             }
         }
 
-    // Resume the game by disabling the pause menu and setting time scale to 1
     public void Resume()
     {
-        pauseMenuUI.SetActive(false);    // Hide the pause menu UI
-        Time.timeScale = 1f;             // Resume game time
-        GameIsPaused = false;            // Set the game as not paused
-        SetCanvasesInteractable(true);   // Re-enable other canvases
-        Debug.Log("Game Resumed");
+        pauseCanvas.SetActive(false);    
+        Time.timeScale = 1f;             
+        GameIsPaused = false;            
+        SetCanvasesInteractable(true);   
     }
 
-    // Pause the game by enabling the pause menu and setting time scale to 0
+    //when pausing the game we have another function then the regular time stop, this function disables all other canvases from being interactable
     void Pause()
     {
-        pauseMenuUI.SetActive(true);     // Show the pause menu UI
-        Time.timeScale = 0f;             // Freeze game time
-        GameIsPaused = true;             // Set the game as paused
+        pauseCanvas.SetActive(true);     
+        Time.timeScale = 0f;             
+        GameIsPaused = true;             
         SetCanvasesInteractable(false);  // Disable other canvases except for the pause menu
-        Debug.Log("Game Paused");
     }
 
-    // Load the main menu scene
     public void MainMenu()
         {
-            Time.timeScale = 1f;             // Ensure game time is running before changing scenes
-            SceneManager.LoadScene("MainMenu"); // Load the main menu scene
-            Debug.Log("Returning to Main Menu");
+            Time.timeScale = 1f;             
+            SceneManager.LoadScene("MainMenu"); 
         }
-    // Function to enable or disable interaction on all canvases except the pause menu
+    // This is a function that enables or disables whether other canvases are interactable or not
     void SetCanvasesInteractable(bool state)
     {
         foreach (Canvas canvas in allCanvases)
         {
-            // Skip the pause menu canvas
-            if (canvas.gameObject == pauseMenuUI)
+      
+            if (canvas.gameObject == pauseCanvas)
+            {
                 continue;
-
-            // Disable interaction with all canvases using CanvasGroup
+            }
+                
             CanvasGroup canvasGroup = canvas.GetComponent<CanvasGroup>();
             if (canvasGroup != null)
             {
@@ -77,7 +71,6 @@ using UnityEngine.UI;
                 canvasGroup.blocksRaycasts = state;
             }
 
-            // Alternatively, disable raycasts using GraphicRaycaster
             GraphicRaycaster raycaster = canvas.GetComponent<GraphicRaycaster>();
             if (raycaster != null)
             {

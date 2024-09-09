@@ -17,12 +17,13 @@ public class MeshGenerator : MonoBehaviour
 
     
     public int pathWidth = 1;  // Width of the paths
-    public Material terrainMaterial; // Material with texture atlas (terrain + path)
+    public Material terrainMaterial; // Material with texture atlas
     public GameObject[] randomObjects;  // Array of random objects to place on the terrain
 
     private bool[,] pathMap;  // 2D array to track path positions
-    public List<Vector3> flattenedPositions = new List<Vector3>();  // List of flattened positions for object placement
-    public int numberOfFlattenedPositions = 10; // Number of valid object placement positions
+
+    public List<Vector3> defenderPositions = new List<Vector3>();  // List of defender positions for defender placement
+    public int numberOfDefenderPositions = 10; // Number of valid defender placement positions
     public float maxDistanceToPath = 5f; // Maximum distance to place towers near the path
     public List<Vector3> pathStartPoints = new List<Vector3>(); // Store path start points for enemy spawning
 
@@ -34,23 +35,23 @@ public class MeshGenerator : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
         GetComponent<MeshRenderer>().material = terrainMaterial;
-
+        //generates random seed every new game
         if (useRandomSeed)
         {
-            seed = Random.Range(0, 10000);  // Use Unity's Random to generate a new seed at runtime
+            seed = Random.Range(0, 10000); 
         }
 
-        pathMap = new bool[xSize + 1, zSize + 1];  // Initialize path tracking map
+        pathMap = new bool[xSize + 1, zSize + 1];  
 
-        CreateShape();
-        CreatePaths();  // Generate non-overlapping winding paths to the center
-        CreateFlattenedPositions();  // Create flattened positions for object placement
-        PlaceRandomObjects(); // Place random objects on the mesh
+        CreateMesh();
+        CreatePaths();  
+        CreateDefenderPositions();  
+        PlaceRandomObjects();
         UpdateMesh();
         
     }
-
-    void CreateShape()
+    //creates the mesh, it does this by making a grid with a randomised seed so that perlin noise can be used for the difference in height
+    void CreateMesh()
     {
         vertices = new Vector3[(xSize + 1) * (zSize + 1)];
         uvs = new Vector2[(xSize + 1) * (zSize + 1)];
@@ -97,25 +98,24 @@ public class MeshGenerator : MonoBehaviour
             vert++;
         }
     }
-
+    //creates the pathways first by finding starting points at the edges of the grid, then stores the center of these starting points so that enemies can spawn there, then initializes the path from the edge to the center square of the grid
     void CreatePaths()
     {
         // Define starting points at the edges
         Vector2Int[] startPoints = new Vector2Int[]
         {
-            new Vector2Int(0, Random.Range(0, zSize)),         // Left edge
-            new Vector2Int(xSize, Random.Range(0, zSize)),     // Right edge
-            new Vector2Int(Random.Range(0, xSize), 0)          // Top edge
+            new Vector2Int(0, Random.Range(0, zSize)),         
+            new Vector2Int(xSize, Random.Range(0, zSize)),     
+            new Vector2Int(Random.Range(0, xSize), 0)          
         };
 
-        // Store the center positions of the 3 starting squares for enemy spawning
+        
         for (int i = 0; i < startPoints.Length; i++)
         {
             pathStartPoints.Add(new Vector3(startPoints[i].x + 0.5f, 1f, startPoints[i].y + 0.5f));
-            pathWaypoints[i] = new List<Vector3>(); // Initialize the pathWaypoints for each path
+            pathWaypoints[i] = new List<Vector3>(); 
         }
 
-        // The center 2x2 square
         Vector2Int centerPoint1 = new Vector2Int(xSize / 2, zSize / 2);
 
         for (int i = 0; i < startPoints.Length; i++)
@@ -124,20 +124,21 @@ public class MeshGenerator : MonoBehaviour
         }
     }
 
+    // this function is so that the paths arent just straight from the outside to the center it adds abit of randomness, also adds the path points to a waypoint array so that the enemies can use it
     void CreateWindingPath(Vector2Int start, Vector2Int end, int pathIndex)
     {
         Vector2Int currentPos = start;
         Vector2Int direction;
-        int maxAttempts = 1000; // Limit to avoid infinite loops
+        int maxAttempts = 1000; 
         int attempts = 0;
 
         while (currentPos != end && attempts < maxAttempts)
         {
             attempts++;
             FlattenSquare(currentPos.x, currentPos.y);
-            pathWaypoints[pathIndex].Add(new Vector3(currentPos.x + 0.5f, 0.5f, currentPos.y + 0.5f)); // Add the waypoint to the path
+            pathWaypoints[pathIndex].Add(new Vector3(currentPos.x + 0.5f, 0.5f, currentPos.y + 0.5f)); 
 
-            // Calculate movement direction
+            
             direction = new Vector2Int(
                 end.x - currentPos.x > 0 ? 1 : (end.x - currentPos.x < 0 ? -1 : 0),
                 end.y - currentPos.y > 0 ? 1 : (end.y - currentPos.y < 0 ? -1 : 0)
@@ -146,7 +147,7 @@ public class MeshGenerator : MonoBehaviour
             if (Random.value > 0.4f) direction.x += Random.Range(-1, 2);
             if (Random.value > 0.4f) direction.y += Random.Range(-1, 2);
 
-            // Ensure the next move is not into a previously created path
+            
             int nextX = Mathf.Clamp(currentPos.x + direction.x, 0, xSize);
             int nextZ = Mathf.Clamp(currentPos.y + direction.y, 0, zSize);
 
@@ -156,6 +157,7 @@ public class MeshGenerator : MonoBehaviour
         }
     }
 
+    //checks how wide the path needs to be and then flattens the squares in correlation to this
     void FlattenSquare(int x, int z)
     {
         for (int dx = -pathWidth / 2; dx <= pathWidth / 2; dx++)
@@ -173,25 +175,25 @@ public class MeshGenerator : MonoBehaviour
         }
     }
 
-    void CreateFlattenedPositions()
+    //checks if a random position is near enough to a path then flattens that square and makes the center avaliable for defenders to be placed
+    void CreateDefenderPositions()
     {
         int count = 0;
-        while (count < numberOfFlattenedPositions)
+        while (count < numberOfDefenderPositions)
         {
             int x = Random.Range(1, xSize - 1);
             int z = Random.Range(1, zSize - 1);
 
             if (!pathMap[x, z] && !pathMap[x + 1, z] && !pathMap[x, z + 1] && !pathMap[x + 1, z + 1])
             {
-                // Check if this position is near the path (within maxDistanceToPath)
+                
                 if (IsNearPath(x, z, maxDistanceToPath))
                 {
-                    // Flatten the 2x2 area
+                    
                     FlattenGridSquare(x, z);
 
-                    // Add the center of this flattened area as a possible placement position
                     Vector3 centerPosition = new Vector3(x + 0.5f, 1f, z + 0.5f);
-                    flattenedPositions.Add(centerPosition);
+                    defenderPositions.Add(centerPosition);
 
                     count++;
                 }
@@ -199,12 +201,13 @@ public class MeshGenerator : MonoBehaviour
         }
     }
 
+    //flattens the squares that are set for defender placement
     void FlattenGridSquare(int x, int z)
     {
-        vertices[z * (xSize + 1) + x].y = 1f;           // Bottom-left
-        vertices[z * (xSize + 1) + (x + 1)].y = 1f;     // Bottom-right
-        vertices[(z + 1) * (xSize + 1) + x].y = 1f;     // Top-left
-        vertices[(z + 1) * (xSize + 1) + (x + 1)].y = 1f; // Top-right
+        vertices[z * (xSize + 1) + x].y = 1f;           
+        vertices[z * (xSize + 1) + (x + 1)].y = 1f;     
+        vertices[(z + 1) * (xSize + 1) + x].y = 1f;     
+        vertices[(z + 1) * (xSize + 1) + (x + 1)].y = 1f; 
 
         pathMap[x, z] = true;
         pathMap[x + 1, z] = true;
@@ -212,15 +215,17 @@ public class MeshGenerator : MonoBehaviour
         pathMap[x + 1, z + 1] = true;
     }
 
+    //checks to see if a square is occupied by a path so that the defenders placement position isnt placed there
     bool IsPathOccupied(int x, int z)
     {
         if (x < 0 || x > xSize || z < 0 || z > zSize)
         {
-            return true;  // Treat out-of-bounds areas as occupied
+            return true;  
         }
         return pathMap[x, z];
     }
 
+    //checks for if there is a nearby path so that the flattened positions avaliable for defenders are close enough to the paths
     bool IsNearPath(int x, int z, float maxDistance)
     {
         for (int dx = -Mathf.CeilToInt(maxDistance); dx <= Mathf.CeilToInt(maxDistance); dx++)
@@ -232,7 +237,7 @@ public class MeshGenerator : MonoBehaviour
 
                 if (pathMap[checkX, checkZ])
                 {
-                    return true;  // Found a nearby path
+                    return true;  
                 }
             }
         }
@@ -240,42 +245,44 @@ public class MeshGenerator : MonoBehaviour
         return false;
     }
 
+    // this function was an additional added in feature to allow for random objects to be placed so that the scene doesnt look to empty
     void PlaceRandomObjects()
     {
-        int numObjectsToPlace = 5; // You can customize the number of objects to place
-        int objectsPlaced = 0;
-
-        while (objectsPlaced < numObjectsToPlace)
+        foreach (GameObject randomObject in randomObjects)
         {
-            // Randomly pick a location on the grid
-            int x = Random.Range(1, xSize - 1);
-            int z = Random.Range(1, zSize - 1);
+            int numInstancesToPlace = Random.Range(1, 4);
 
-            if (!pathMap[x, z] && !flattenedPositions.Contains(new Vector3(x, 1f, z)))
+            int instancesPlaced = 0;
+
+            while (instancesPlaced < numInstancesToPlace)
             {
-                // Pick a random object from the array
-                GameObject randomObject = randomObjects[Random.Range(0, randomObjects.Length)];
+                int x = Random.Range(1, xSize - 1);
+                int z = Random.Range(1, zSize - 1);
 
-                // Instantiate the object at the chosen position
-                Vector3 spawnPosition = new Vector3(x + 0.5f, 1f, z + 0.5f);
-                Instantiate(randomObject, spawnPosition, Quaternion.identity);
+                if (!pathMap[x, z] && !defenderPositions.Contains(new Vector3(x, 1f, z)))
+                {
+                    Vector3 spawnPosition = new Vector3(x + 0.5f, 1f, z + 0.5f);
 
-                objectsPlaced++;
+                    Instantiate(randomObject, spawnPosition, Quaternion.identity);
+
+                    instancesPlaced++;
+                }
             }
         }
     }
 
+    //updates the mesh that is generated
     void UpdateMesh()
     {
         mesh.Clear();
         mesh.vertices = vertices;
         mesh.triangles = triangles;
-        mesh.uv = uvs;  // Apply UVs to the mesh
+        mesh.uv = uvs;  
         mesh.RecalculateNormals();
     }
 
     
-
+    //optional, shows the vertices and the flattened places where a defender can be placed but only in scene view  
     public void OnDrawGizmos()
     {
         if (vertices != null)
@@ -285,9 +292,8 @@ public class MeshGenerator : MonoBehaviour
                 Gizmos.DrawSphere(vertices[i], .1f);
             }
 
-            // Draw Gizmos for the flattened positions
             Gizmos.color = Color.green;
-            foreach (var pos in flattenedPositions)
+            foreach (var pos in defenderPositions)
             {
                 Gizmos.DrawSphere(pos, 0.2f);
             }

@@ -5,39 +5,38 @@ using UnityEngine.UI;
 
 public class DefenderPlacement : MonoBehaviour
 {
-    public GameObject defender1PlacePrefab;   // The object prefab to be placed
-    public Button defender1Button;            // Reference to the UI Button to activate placement
-    public Image defender1Indicator;          // The image that follows the mouse as a visual indicator
-    public MeshGenerator meshGenerator;       // Reference to the MeshGenerator to access flattened positions
-    public GameObject placementMarkerPrefab;  // Prefab for the visual marker (e.g., a transparent sphere)
+    public GameObject defender1PlacePrefab;   // The defender1 that will be placed
+    public Button defender1Button;            // Button that allows you to place dfenders
+    public Image defender1Indicator;          // The image that follows the mouse as a visual indicator for what type of defender is placed
+
+    public GameObject placementMarkerPrefab;  // Prefab for the visual marker that shows where defenders can be placed
     public GameObject rangeIndicatorPrefab;   // Prefab for the range indicator
-    public Hourglass hourglass;               // Reference to the Hourglass script
 
-    private bool isPlacing = false;           // Tracks whether placement mode is active
-    private List<GameObject> placementMarkers = new List<GameObject>();  // List to store active markers
-    private int placedDefenders = 0;          // Counter to track how many defenders have been placed
-    public int maxDefenders = 10;             // Maximum number of defenders to be placed
+    //reference to other scripts
+    public MeshGenerator meshGenerator;       
+    public Hourglass hourglass;               
 
-    private GameObject rangeIndicator;        // The instantiated range indicator object
+    //information for the placement of defenders
+    private bool isPlacing = false;           
+    private List<GameObject> placementMarkers = new List<GameObject>();  
+    private int placedDefenders = 0;          
+    public int maxDefenders = 10;             
+
+    private GameObject rangeIndicator;  // The instantiated range indicator object that shows the range of the defender
 
     void Start()
     {
-        // Add listener to the place button to activate placement mode when clicked
-        defender1Button.onClick.AddListener(ActivatePlacementMode);
-        defender1Indicator.enabled = false;  // Hide the indicator initially
+        defender1Indicator.enabled = false;  
     }
 
     void Update()
     {
-        // Update the number of defenders in the scene
         UpdateDefenderCount();
 
-        // Update the position of the selection indicator to follow the mouse
+        // Update the position of the selection indicator to follow the mouse and place the object if its avaliable
         if (isPlacing)
         {
             UpdateSelectionIndicator();
-
-            // If player clicks and we're in placement mode, attempt to place the object
             if (Input.GetMouseButtonDown(0))
             {
                 PlaceObjectAtPosition();
@@ -46,23 +45,24 @@ public class DefenderPlacement : MonoBehaviour
     }
 
     // This function is called when the player clicks the button to start placing the object
-    void ActivatePlacementMode()
+    public void ActivatePlacementMode()
     {
-        // Only allow placement if less than maxDefenders have been placed
+        // Only allows placement if the max amount of defenders hasnt been reached
         if (placedDefenders < maxDefenders)
         {
             isPlacing = true;
-            defender1Indicator.enabled = true;  // Show the selection indicator
-            defender1Button.interactable = false;   // Disable the button during placement
+            defender1Indicator.enabled = true;
+            defender1Button.interactable = false;
 
             // Instantiate the range indicator and set its scale based on the defender's attack range
             if (rangeIndicatorPrefab != null)
             {
                 rangeIndicator = Instantiate(rangeIndicatorPrefab, Vector3.zero, Quaternion.identity);
                 float attackRange = defender1PlacePrefab.GetComponent<DefenderBase>().attackRange;
-                float indicatorScale = attackRange * 2f; // Diameter based on the attack range
-                rangeIndicator.transform.localScale = new Vector3(indicatorScale, indicatorScale, 1f); // Rotate it appropriately
-                rangeIndicator.transform.localRotation = Quaternion.Euler(90f, 0f, 0f); // Rotate 90 degrees on X-axis
+                float indicatorScale = attackRange * 2f;
+                rangeIndicator.transform.localScale = new Vector3(indicatorScale, indicatorScale, 1f);
+                //rotate the object to be in the correct rotation for it to look like the players range
+                rangeIndicator.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
             }
 
             // Show placement markers at the valid positions
@@ -70,109 +70,84 @@ public class DefenderPlacement : MonoBehaviour
         }
     }
 
-    // This function updates the position of the selection indicator to follow the mouse
+    // This function updates the position of the selection indicator to follow the mouse in worldspace
     void UpdateSelectionIndicator()
     {
         Vector3 mousePos = Input.mousePosition;
-
-        // Adjust the indicator to be slightly to the top-right of the mouse cursor
-        Vector3 offset = new Vector3(50f, 50f, 0f);  // You can adjust the offset values as needed
+        Vector3 offset = new Vector3(50f, 50f, 0f);
         defender1Indicator.transform.position = mousePos + offset;
-
-        // Update the position of the range indicator to follow the mouse cursor in world space
         UpdateRangeIndicatorPosition();
     }
 
-    // This function ensures that the range indicator follows the mouse and stays above the terrain
+    // This function makes it so that the range indicator follows the mouse and stays above the terrain and only where you can place defenders 
     void UpdateRangeIndicatorPosition()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-
-        // Check if the raycast hits anything
         if (Physics.Raycast(ray, out hit, Mathf.Infinity))
         {
-            // Get the point where the ray hits any surface (terrain or otherwise)
             Vector3 worldPosition = hit.point;
-
-            // Offset the Y position slightly to ensure the indicator stays above the terrain
-            worldPosition.y += 0.1f; // Adjust the offset as needed to avoid clipping
-
-            // Set the position of the range indicator
+            worldPosition.y += 0.1f;
             rangeIndicator.transform.position = worldPosition;
         }
     }
 
-    // This function places the object at one of the valid positions
+    // This function places the object at one of the valid positions when there is a mouse click on that position, it also prevents more than one defender being placed in the same square aswell as not allowing for 
     void PlaceObjectAtPosition()
     {
-        // Raycast from the camera to the mouse position
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
         if (Physics.Raycast(ray, out hit, Mathf.Infinity))
         {
-            foreach (Vector3 position in meshGenerator.flattenedPositions)
+            foreach (Vector3 position in meshGenerator.defenderPositions)
             {
-                // Check if the raycast hit a valid placement area
                 if (Vector3.Distance(hit.point, position) < 0.5f)
                 {
-                    // Check for collision with other defenders in the position
                     if (!IsCollidingWithDefender(position))
                     {
-                        // Adjust the Y position of the defender to be placed 1 unit above the ground
                         Vector3 adjustedPosition = new Vector3(position.x, position.y + 1f, position.z);
-
-                        // Instantiate the defender at the adjusted position
                         GameObject placedDefender = Instantiate(defender1PlacePrefab, adjustedPosition, Quaternion.identity);
 
-                        // If defender is placed, reduce health from the hourglass
+                        // If defender is placed, reduce health from the hourglass, this is the main gameplay loop
                         if (placedDefender.GetComponent<Defender1>() != null)
                         {
                             hourglass.ReduceHealthForDefenderPlacement(30f);
-                            Debug.Log("DefenderHealthTaken");
                         }
-
+                        // sets the things that should only be around during placement mode back to false/ not visible
                         isPlacing = false;
-                        defender1Indicator.enabled = false;  // Hide the indicator after placing
-                        Destroy(rangeIndicator);             // Destroy the range indicator after placement
-                        HidePlacementMarkers();              // Hide the placement markers
+                        defender1Indicator.enabled = false; 
+                        Destroy(rangeIndicator);            
+                        HidePlacementMarkers();              
 
                         return;
                     }
-                    else
-                    {
-                        Debug.Log("Cannot place defender here. A defender is already present.");
-                    }
                 }
             }
-
-            Debug.Log("No valid or available placement position found.");
         }
     }
 
-    // Collision check to see if the position overlaps with an existing defender
+    // Checks for collision with another defender so that there is only one defender per position at a time
     bool IsCollidingWithDefender(Vector3 position)
     {
-        Collider[] hitColliders = Physics.OverlapSphere(position, 0.5f); // Adjust the radius if needed
+        Collider[] hitColliders = Physics.OverlapSphere(position, 0.5f);
 
         foreach (Collider hitCollider in hitColliders)
         {
             if (hitCollider.CompareTag("Defender"))
             {
-                return true;  // Defender already in this position
+                return true;
             }
         }
 
-        return false;  // No defenders in the position
+        return false;
     }
 
-    // Show visual markers for the valid flattened positions
+    // Show visual markers for the valid flattened positions defenders can be placed on
     void ShowPlacementMarkers()
     {
-        foreach (Vector3 position in meshGenerator.flattenedPositions)
+        foreach (Vector3 position in meshGenerator.defenderPositions)
         {
-            // Instantiate a marker at each valid position
             GameObject marker = Instantiate(placementMarkerPrefab, position, Quaternion.identity);
             placementMarkers.Add(marker);
         }
@@ -183,26 +158,23 @@ public class DefenderPlacement : MonoBehaviour
     {
         foreach (GameObject marker in placementMarkers)
         {
-            Destroy(marker);  // Remove the marker from the scene
+            Destroy(marker);
         }
 
-        placementMarkers.Clear();  // Clear the list of markers
+        placementMarkers.Clear();
     }
 
-    // Dynamically update the number of placed defenders
+    // Updates the number of defenders based on how many are in the scene, also checks to see if the max amount of defenders has been reached and deactivates the defender placement or reactivates it if thats not the case
     void UpdateDefenderCount()
     {
         placedDefenders = FindObjectsOfType<Defender1>().Length;
-
-        // Check if the maximum number of defenders has been placed
         if (placedDefenders >= maxDefenders)
         {
-            defender1Button.interactable = false;  // Disable the button when the limit is reached
-            Debug.Log("All defender positions are filled.");
+            defender1Button.interactable = false;
         }
         else
         {
-            defender1Button.interactable = true;   // Re-enable the button if more placements are allowed
+            defender1Button.interactable = true;
         }
     }
 }
