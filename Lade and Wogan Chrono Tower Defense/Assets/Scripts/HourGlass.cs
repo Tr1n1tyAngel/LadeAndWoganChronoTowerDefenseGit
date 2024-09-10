@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class Hourglass : MonoBehaviour
 {
     //hourglass stats
-    public float hourglassHealth = 100; 
+    public float hourglassHealth = 500; 
     public float radius = 5f; 
     public float damage = 10; 
     public float damageInterval = 5f; 

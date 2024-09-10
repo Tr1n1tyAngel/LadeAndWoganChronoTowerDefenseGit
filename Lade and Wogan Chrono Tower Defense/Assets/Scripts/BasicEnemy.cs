@@ -1,28 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class BasicEnemy : MonoBehaviour
 {
     //base enemy stats
     public float enemyHealth = 50;
     public float enemyMaxHealth = 50;
-    public float movementSpeed = 3f;  
-    public float damage = 10f;        
-    public bool canAttack = true;     
+    public float movementSpeed = 3f;
+    public float damage = 10f;
+    public bool canAttack = true;
     public float attackRange = 1f;
-    
+    public Transform enemyTarget; // The target object to rotate towards
+    private float rotationSpeed = 5f;
+
     //references to other scripts
-    public MeshGenerator meshGenerator; 
+    public MeshGenerator meshGenerator;
     public Hourglass hourglass;
-    protected DefenderBase currentTarget; 
+    protected DefenderBase currentTarget;
     protected Hourglass currentTargetH;
     public WorldSpaceHealthBar worldSpaceHealthBar;
 
     //enemy waypoints for them to move along the path
-    private List<Vector3> waypoints = new List<Vector3>(); 
-    private int currentWaypointIndex = 0; 
-    
+    private List<Vector3> waypoints = new List<Vector3>();
+    private int currentWaypointIndex = 0;
+
 
     private void Start()
     {
@@ -50,7 +53,7 @@ public class BasicEnemy : MonoBehaviour
     }
 
     protected virtual void Die()
-    {  
+    {
         Destroy(gameObject);
     }
 
@@ -76,19 +79,19 @@ public class BasicEnemy : MonoBehaviour
     {
         if (currentTarget == null || currentTarget.defenderHealth <= 0)
         {
-            FindNewTarget();  
+            FindNewTarget();
         }
         else
         {
-            AttackTarget();  
+            AttackTarget();
         }
         if (currentTargetH == null || currentTargetH.hourglassHealth <= 0)
         {
-            FindNewTarget();  
+            FindNewTarget();
         }
         else
         {
-            AttackTarget();  
+            AttackTarget();
         }
     }
 
@@ -103,7 +106,7 @@ public class BasicEnemy : MonoBehaviour
                 {
                     currentTarget.TakeDamage(damage);
                     canAttack = false;
-                    Invoke(nameof(ResetAttack), 1f); 
+                    Invoke(nameof(ResetAttack), 1f);
                 }
             }
         }
@@ -130,7 +133,7 @@ public class BasicEnemy : MonoBehaviour
     // Once a target is dead or out of range the enemy must look for a new one
     protected void FindNewTarget()
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, attackRange);  
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, attackRange);
         foreach (var hitCollider in hitColliders)
         {
             if (hitCollider.CompareTag("Defender"))
@@ -138,7 +141,7 @@ public class BasicEnemy : MonoBehaviour
                 currentTarget = hitCollider.GetComponent<DefenderBase>();
                 if (currentTarget != null && currentTarget.defenderHealth > 0)
                 {
-                    break;  
+                    break;
                 }
             }
             if (hitCollider.CompareTag("HourGlass"))
@@ -146,7 +149,7 @@ public class BasicEnemy : MonoBehaviour
                 currentTargetH = hitCollider.GetComponent<Hourglass>();
                 if (currentTargetH != null && currentTargetH.hourglassHealth > 0)
                 {
-                    break;  
+                    break;
                 }
             }
         }
@@ -156,5 +159,23 @@ public class BasicEnemy : MonoBehaviour
     {
         MoveAlongPath();
         DetectDefendersInRange();
+        RotateTowardsTarget();
+    }
+
+    //Makes the enemy face its target
+    public void RotateTowardsTarget()
+    {
+        if (enemyTarget != null)
+        {
+            Vector3 direction = enemyTarget.position - transform.position;
+            direction.y = 0;
+
+            if (direction != Vector3.zero)
+            {
+
+                Quaternion targetRotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+            }
+        }
     }
 }

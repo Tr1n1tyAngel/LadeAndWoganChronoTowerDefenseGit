@@ -24,6 +24,7 @@ public class Enemy1 : BasicEnemy
         if (hourglass == null)
         {
             hourglass = GameObject.FindWithTag("HourGlass")?.GetComponent<Hourglass>();
+            enemyTarget = hourglass.transform;
         }
     }
 
