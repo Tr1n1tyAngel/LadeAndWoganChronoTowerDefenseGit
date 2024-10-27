@@ -7,10 +7,19 @@ public class DefenderPlacement : MonoBehaviour
 {
     public GameObject defender1PlacePrefab;   // The defender1 that will be placed
     public Button defender1Button;            // Button that allows you to place dfenders
-    public Image defender1Indicator;          // The image that follows the mouse as a visual indicator for what type of defender is placed
+    public Image defenderIndicator;
+    public Sprite[] defenderSprites = new Sprite[3];// The image that follows the mouse as a visual indicator for what type of defender is placed
 
     public GameObject placementMarkerPrefab;  // Prefab for the visual marker that shows where defenders can be placed
     public GameObject rangeIndicatorPrefab;   // Prefab for the range indicator
+
+    public GameObject defender2PlacePrefab;
+    public Button defender2Button;
+
+    public GameObject defender3PlacePrefab;
+    public Button defender3Button;
+
+    private GameObject selectedDefenderPrefab;
 
     //reference to other scripts
     public MeshGenerator meshGenerator;       
@@ -26,7 +35,7 @@ public class DefenderPlacement : MonoBehaviour
 
     void Start()
     {
-        defender1Indicator.enabled = false;  
+        defenderIndicator.enabled = false;
     }
 
     void Update()
@@ -44,29 +53,65 @@ public class DefenderPlacement : MonoBehaviour
         }
     }
 
+    
+
     // This function is called when the player clicks the button to start placing the object
-    public void ActivatePlacementMode()
+    public void ActivatePlacementMode(int defenderType)
     {
-        // Only allows placement if the max amount of defenders hasnt been reached
         if (placedDefenders < maxDefenders)
         {
             isPlacing = true;
-            defender1Indicator.enabled = true;
-            defender1Button.interactable = false;
+            defenderIndicator.enabled = true;  // Adjust to show specific indicator per defender if needed
 
-            // Instantiate the range indicator and set its scale based on the defender's attack range
-            if (rangeIndicatorPrefab != null)
+            // Set selected prefab based on defender type
+            switch (defenderType)
             {
-                rangeIndicator = Instantiate(rangeIndicatorPrefab, Vector3.zero, Quaternion.identity);
-                float attackRange = defender1PlacePrefab.GetComponent<DefenderBase>().attackRange;
-                float indicatorScale = attackRange * 2f;
-                rangeIndicator.transform.localScale = new Vector3(indicatorScale, indicatorScale, 1f);
-                //rotate the object to be in the correct rotation for it to look like the players range
-                rangeIndicator.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+                case 0:
+                    defenderIndicator.sprite = defenderSprites[defenderType];
+                    selectedDefenderPrefab = defender1PlacePrefab;
+                    defender1Button.interactable = false;
+                    if (rangeIndicatorPrefab != null)
+                    {
+                        rangeIndicator = Instantiate(rangeIndicatorPrefab, Vector3.zero, Quaternion.identity);
+                        float attackRange = defender1PlacePrefab.GetComponent<DefenderBase>().attackRange;
+                        float indicatorScale = attackRange * 2f;
+                        rangeIndicator.transform.localScale = new Vector3(indicatorScale, indicatorScale, 1f);
+                        //rotate the object to be in the correct rotation for it to look like the players range
+                        rangeIndicator.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+                    }
+                    break;
+                case 1:
+                    defenderIndicator.sprite = defenderSprites[defenderType];
+                    selectedDefenderPrefab = defender2PlacePrefab;
+                    defender2Button.interactable = false;
+                    if (rangeIndicatorPrefab != null)
+                    {
+                        rangeIndicator = Instantiate(rangeIndicatorPrefab, Vector3.zero, Quaternion.identity);
+                        float attackRange = defender2PlacePrefab.GetComponent<DefenderBase>().attackRange;
+                        float indicatorScale = attackRange * 2f;
+                        rangeIndicator.transform.localScale = new Vector3(indicatorScale, indicatorScale, 1f);
+                        //rotate the object to be in the correct rotation for it to look like the players range
+                        rangeIndicator.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+                    }
+                    break;
+                case 2:
+                    defenderIndicator.sprite = defenderSprites[defenderType];
+                    selectedDefenderPrefab = defender3PlacePrefab;
+                    defender3Button.interactable = false;
+                    if (rangeIndicatorPrefab != null)
+                    {
+                        rangeIndicator = Instantiate(rangeIndicatorPrefab, Vector3.zero, Quaternion.identity);
+                        float attackRange = defender3PlacePrefab.GetComponent<DefenderBase>().attackRange;
+                        float indicatorScale = attackRange * 2f;
+                        rangeIndicator.transform.localScale = new Vector3(indicatorScale, indicatorScale, 1f);
+                        //rotate the object to be in the correct rotation for it to look like the players range
+                        rangeIndicator.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
+                    }
+                    break;
             }
-
-            // Show placement markers at the valid positions
-            ShowPlacementMarkers();
+        
+        // Show placement markers and other indicators as before
+        ShowPlacementMarkers();
         }
     }
 
@@ -75,7 +120,7 @@ public class DefenderPlacement : MonoBehaviour
     {
         Vector3 mousePos = Input.mousePosition;
         Vector3 offset = new Vector3(50f, 50f, 0f);
-        defender1Indicator.transform.position = mousePos + offset;
+        defenderIndicator.transform.position = mousePos + offset;
         UpdateRangeIndicatorPosition();
     }
 
@@ -93,7 +138,7 @@ public class DefenderPlacement : MonoBehaviour
     }
 
     // This function places the object at one of the valid positions when there is a mouse click on that position, it also prevents more than one defender being placed in the same square aswell as not allowing for 
-    void PlaceObjectAtPosition()
+    public void PlaceObjectAtPosition()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
@@ -107,19 +152,27 @@ public class DefenderPlacement : MonoBehaviour
                     if (!IsCollidingWithDefender(position))
                     {
                         Vector3 adjustedPosition = new Vector3(position.x, position.y + 1f, position.z);
-                        GameObject placedDefender = Instantiate(defender1PlacePrefab, adjustedPosition, Quaternion.identity);
+                        GameObject placedDefender = Instantiate(selectedDefenderPrefab, adjustedPosition, Quaternion.identity);
 
-                        // If defender is placed, reduce health from the hourglass, this is the main gameplay loop
+                        // Deduct different costs based on the defender type
                         if (placedDefender.GetComponent<Defender1>() != null)
                         {
                             hourglass.ReduceHealthForDefenderPlacement(30f);
                         }
-                        // sets the things that should only be around during placement mode back to false/ not visible
-                        isPlacing = false;
-                        defender1Indicator.enabled = false; 
-                        Destroy(rangeIndicator);            
-                        HidePlacementMarkers();              
+                        else if (placedDefender.GetComponent<Defender2>() != null)
+                        {
+                            hourglass.ReduceHealthForDefenderPlacement(50f);  // Higher cost for Defender2
+                        }
+                        else if (placedDefender.GetComponent<Defender3>() != null)
+                        {
+                            hourglass.ReduceHealthForDefenderPlacement(70f);  // Adjust cost for Defender3
+                        }
 
+                        // Reset placement state
+                        isPlacing = false;
+                        defenderIndicator.enabled = false;
+                        Destroy(rangeIndicator);
+                        HidePlacementMarkers();
                         return;
                     }
                 }
@@ -171,10 +224,14 @@ public class DefenderPlacement : MonoBehaviour
         if (placedDefenders >= maxDefenders)
         {
             defender1Button.interactable = false;
+            defender2Button.interactable = false;
+            defender3Button.interactable = false;
         }
         else
         {
             defender1Button.interactable = true;
+            defender2Button.interactable = true;
+            defender3Button.interactable = true;
         }
     }
 }

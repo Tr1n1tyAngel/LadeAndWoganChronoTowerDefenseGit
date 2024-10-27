@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    public GameObject enemyPrefab;
+    public GameObject[] enemyPrefabs = new GameObject[3];
     public MeshGenerator meshGenerator;
 
     public float spawnInterval = 3f;
@@ -28,8 +28,9 @@ public class EnemySpawner : MonoBehaviour
         {
            
             int randomIndex = Random.Range(0, meshGenerator.pathStartPoints.Count);
+            int randomEnemy = Random.Range(0, 3);
 
-            GameObject enemy = Instantiate(enemyPrefab, meshGenerator.pathStartPoints[randomIndex], Quaternion.identity);
+            GameObject enemy = Instantiate(enemyPrefabs[randomEnemy], meshGenerator.pathStartPoints[randomIndex], Quaternion.identity);
 
             BasicEnemy enemyScript = enemy.GetComponent<BasicEnemy>();
             if (enemyScript != null)
