@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Enemy2 : BasicEnemy
 {
+    
     void Start()
     {
         // Tank enemy stats

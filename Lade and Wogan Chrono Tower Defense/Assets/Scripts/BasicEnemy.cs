@@ -14,7 +14,7 @@ public class BasicEnemy : MonoBehaviour
     public float attackRange = 1f;
     public Transform enemyTarget; // The target object to rotate towards
     private float rotationSpeed = 5f;
-
+    
     //references to other scripts
     public MeshGenerator meshGenerator;
     public Hourglass hourglass;

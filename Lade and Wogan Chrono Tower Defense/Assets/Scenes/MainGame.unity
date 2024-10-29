@@ -185,6 +185,7 @@ MonoBehaviour:
   defender3Button: {fileID: 1849148712}
   meshGenerator: {fileID: 1838571900}
   hourglass: {fileID: 1543347719017434338}
+  placedDefenders: 0
   maxDefenders: 10
 --- !u!114 &1436524
 MonoBehaviour:
@@ -203,7 +204,9 @@ MonoBehaviour:
   - {fileID: 671539729935628539, guid: fa93121a12546a045b3b07fc7bf89a97, type: 3}
   - {fileID: 671539729935628539, guid: 3956a27a77a3f0840a7850312fce6868, type: 3}
   meshGenerator: {fileID: 1838571900}
-  spawnInterval: 5
+  placement: {fileID: 1436523}
+  hourglass: {fileID: 1543347719017434338}
+  baseSpawnInterval: 3
 --- !u!114 &1436525
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -349,7 +352,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Place \nDefender \n3\n70 secs of time."
+  m_text: "Place \nDefender \n3\n150 secs of time."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2427,8 +2430,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hourglassHealth: 500
-  radius: 3
-  damage: 5
+  radius: 5
+  damage: 10
   damageInterval: 1
   healthbar: {fileID: 92350984742318981}
   healthText: {fileID: 7653275915027947384}

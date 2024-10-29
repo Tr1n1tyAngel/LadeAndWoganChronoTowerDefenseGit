@@ -1,9 +1,11 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy3 : BasicEnemy
 {
+    
     void Start()
     {
         // Fast enemy stats
@@ -12,7 +14,7 @@ public class Enemy3 : BasicEnemy
         movementSpeed = 5f;       // Faster movement speed
         damage = 5f;              // Lower damage per hit
         attackRange = 8f;         // Similar range or adjust as needed
-
+        
         // Enemy health bar
         worldSpaceHealthBar = GetComponentInChildren<WorldSpaceHealthBar>();
 

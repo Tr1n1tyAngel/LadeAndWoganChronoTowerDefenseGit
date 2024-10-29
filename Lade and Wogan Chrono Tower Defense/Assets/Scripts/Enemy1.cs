@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Enemy1 : BasicEnemy
 {
+
     void Start()
     {
         //Enemy stats
@@ -11,8 +12,7 @@ public class Enemy1 : BasicEnemy
         enemyMaxHealth = 50f;
         movementSpeed = 3f;        
         damage = 10f;              
-        attackRange = 8f;  
-        
+        attackRange = 8f;
         //Enemy health bar
         worldSpaceHealthBar = GetComponentInChildren<WorldSpaceHealthBar>();
 

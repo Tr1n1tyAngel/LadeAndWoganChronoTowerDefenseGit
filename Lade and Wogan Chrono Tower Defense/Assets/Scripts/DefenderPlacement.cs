@@ -28,7 +28,7 @@ public class DefenderPlacement : MonoBehaviour
     //information for the placement of defenders
     private bool isPlacing = false;           
     private List<GameObject> placementMarkers = new List<GameObject>();  
-    private int placedDefenders = 0;          
+    public int placedDefenders = 0;          
     public int maxDefenders = 10;             
 
     private GameObject rangeIndicator;  // The instantiated range indicator object that shows the range of the defender
@@ -53,7 +53,7 @@ public class DefenderPlacement : MonoBehaviour
         }
     }
 
-    
+
 
     // This function is called when the player clicks the button to start placing the object
     public void ActivatePlacementMode(int defenderType)
@@ -62,7 +62,7 @@ public class DefenderPlacement : MonoBehaviour
         {
             isPlacing = true;
             defenderIndicator.enabled = true;  // Adjust to show specific indicator per defender if needed
-
+            DisablePlacementButtons();
             // Set selected prefab based on defender type
             switch (defenderType)
             {
@@ -109,10 +109,25 @@ public class DefenderPlacement : MonoBehaviour
                     }
                     break;
             }
-        
-        // Show placement markers and other indicators as before
-        ShowPlacementMarkers();
+
+            // Show placement markers and other indicators as before
+            ShowPlacementMarkers();
         }
+    }
+    // Disable all placement buttons
+    private void DisablePlacementButtons()
+    {
+        defender1Button.interactable = false;
+        defender2Button.interactable = false;
+        defender3Button.interactable = false;
+    }
+
+    // Enable all placement buttons
+    private void EnablePlacementButtons()
+    {
+        defender1Button.interactable = true;
+        defender2Button.interactable = true;
+        defender3Button.interactable = true;
     }
 
     // This function updates the position of the selection indicator to follow the mouse in worldspace
@@ -165,7 +180,7 @@ public class DefenderPlacement : MonoBehaviour
                         }
                         else if (placedDefender.GetComponent<Defender3>() != null)
                         {
-                            hourglass.ReduceHealthForDefenderPlacement(70f);  // Adjust cost for Defender3
+                            hourglass.ReduceHealthForDefenderPlacement(150f);  // Adjust cost for Defender3
                         }
 
                         // Reset placement state
@@ -173,6 +188,7 @@ public class DefenderPlacement : MonoBehaviour
                         defenderIndicator.enabled = false;
                         Destroy(rangeIndicator);
                         HidePlacementMarkers();
+                        EnablePlacementButtons();
                         return;
                     }
                 }
