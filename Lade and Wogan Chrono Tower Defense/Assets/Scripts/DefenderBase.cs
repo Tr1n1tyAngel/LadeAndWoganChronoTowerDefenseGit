@@ -7,9 +7,9 @@ public class DefenderBase : MonoBehaviour
     //base defender information
     public float defenderHealth = 100f;
     public float defenderMaxHealth = 100f;
-    public float attackDamage = 10f;       
-    public float attackRange = 5f;        
-    public float attackCooldown = 2f;    
+    public float attackDamage = 10f;
+    public float attackRange = 5f;
+    public float attackCooldown = 2f;
     public float lastAttackTime = 0f;
     //base defender health bar
     public WorldSpaceHealthBar worldSpaceHealthBar;
@@ -35,7 +35,7 @@ public class DefenderBase : MonoBehaviour
         if (Time.time >= lastAttackTime + attackCooldown)
         {
             enemy.TakeDamage(attackDamage);
-            lastAttackTime = Time.time; 
+            lastAttackTime = Time.time;
         }
     }
 
@@ -57,5 +57,13 @@ public class DefenderBase : MonoBehaviour
                 break;
             }
         }
+    }
+
+    public void UpgradeHealth(float amount)
+    {
+        defenderMaxHealth += amount;
+        defenderHealth = defenderMaxHealth; // Restore to max health after upgrade
+        if (worldSpaceHealthBar != null)
+            worldSpaceHealthBar.UpdateHealthBar(defenderHealth, defenderMaxHealth);
     }
 }

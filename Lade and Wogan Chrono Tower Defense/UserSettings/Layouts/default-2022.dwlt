@@ -318,7 +318,7 @@ MonoBehaviour:
     m_OverlaysVisible: 1
   m_LockTracker:
     m_IsLocked: 0
-  m_LastSelectedObjectID: 45104
+  m_LastSelectedObjectID: -73348
 --- !u!114 &13
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -701,7 +701,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Scripts
+    - Assets
     m_Globs: []
     m_OriginalText: 
     m_ImportLogFlags: 0
@@ -709,17 +709,17 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Scripts
+  - Assets
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\gabri\OneDrive\Documents\GADE2024 Sem2\LadeAndWoganChronoTowerDefenseGit\Lade
     and Wogan Chrono Tower Defense
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 60}
-    m_SelectedIDs: 0e6a0000
-    m_LastClickedID: 27150
-    m_ExpandedIDs: 00000000ea690000ec690000ee690000f0690000f2690000f4690000f669000000ca9a3bffffff7f
+    scrollPos: {x: 0, y: 0}
+    m_SelectedIDs: fa680000
+    m_LastClickedID: 26874
+    m_ExpandedIDs: 00000000fa680000fc680000fe6800000069000002690000046900000669000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -747,7 +747,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000ea690000ec690000ee690000f0690000f2690000f4690000f6690000
+    m_ExpandedIDs: 00000000fa680000fc680000fe68000000690000026900000469000006690000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -844,7 +844,7 @@ MonoBehaviour:
     m_ControlHash: -371814159
     m_PrefName: Preview_InspectorPreview
   m_LastInspectedObjectInstanceID: -1
-  m_LastVerticalScrollValue: 522
+  m_LastVerticalScrollValue: 0
   m_GlobalObjectId: 
   m_InspectorMode: 0
   m_LockTracker:
@@ -887,9 +887,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: e4250000
+      m_SelectedIDs: 3e2ffeff
       m_LastClickedID: 0
-      m_ExpandedIDs: e20dffff1afbffffb0620000ca62000042630000
+      m_ExpandedIDs: f0d2ffff7ed3fffffed3ffffb4d4ffff84d7ffff04dbffff26e1ffff42e4ffffc6e4ffff32e6ffff92efffff20f0ffff6cf7ffff1afbffffbc620000d6620000a4630000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1308,9 +1308,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 17.976334, y: 4.909661, z: 24.091667}
+    m_Target: {x: 12.501879, y: -53.967415, z: 177.30548}
     speed: 2
-    m_Value: {x: 17.976334, y: 4.909661, z: 24.091667}
+    m_Value: {x: 12.501879, y: -53.967415, z: 177.30548}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1356,13 +1356,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: 0.023574403, y: 0.55331403, z: 0.015459683, w: -0.8326538}
+    m_Target: {x: -0.1836671, y: 0.033884022, z: -0.0065319636, w: -0.9825166}
     speed: 2
-    m_Value: {x: 0.023571298, y: 0.55324113, z: 0.015457647, w: -0.83254415}
+    m_Value: {x: -0.18364292, y: 0.033879563, z: -0.006531104, w: -0.9823873}
   m_Size:
-    m_Target: 0.23771349
+    m_Target: 121.72435
     speed: 2
-    m_Value: 0.23771349
+    m_Value: 121.72435
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -1507,7 +1507,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 791
-    width: 1691
+    width: 1536
     height: 248
   m_SerializedDataModeController:
     m_DataMode: 0

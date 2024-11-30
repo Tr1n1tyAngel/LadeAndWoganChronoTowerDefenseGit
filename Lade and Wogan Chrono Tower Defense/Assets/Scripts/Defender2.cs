@@ -43,4 +43,18 @@ public class Defender2 : DefenderBase
             enemy.movementSpeed /= slowEffect;
         }
     }
+    public bool UpgradeSlowEffect(float cost, float slowEffectIncrease, Hourglass hourglass)
+    {
+        if (hourglass.hourglassHealth >= cost)
+        {
+            hourglass.ReduceHealthForDefenderPlacement(cost);
+            slowEffect += slowEffectIncrease;
+            return true;
+        }
+        return false;
+    }
+    public void UpgradeSlowEffect(float amount)
+    {
+        slowEffect += amount;
+    }
 }

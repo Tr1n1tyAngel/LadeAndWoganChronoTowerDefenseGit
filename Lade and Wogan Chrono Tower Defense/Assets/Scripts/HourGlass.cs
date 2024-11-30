@@ -9,19 +9,20 @@ using UnityEngine.UI;
 public class Hourglass : MonoBehaviour
 {
     //hourglass stats
-    public float hourglassHealth = 500; 
-    public float radius = 5f; 
-    public float damage = 10; 
-    public float damageInterval = 5f; 
+    public float hourglassHealth = 500;
+    public float maxHourglassHealth = 500;
+    public float radius = 5f;
+    public float damage = 10;
+    public float damageInterval = 5f;
 
     //UI elements used by the hourglass
     public Image healthbar;
-    public TextMeshProUGUI healthText; 
+    public TextMeshProUGUI healthText;
 
     private void Start()
     {
         StartCoroutine(DamageEnemiesOverTime());
-        UpdateHealthUI(); 
+        UpdateHealthUI();
     }
 
     void Update()
@@ -29,19 +30,20 @@ public class Hourglass : MonoBehaviour
 
     }
 
+
     //Damage is done to enemies within a radius every few seconds
     IEnumerator DamageEnemiesOverTime()
     {
-        while (hourglassHealth > 0) 
+        while (hourglassHealth > 0)
         {
-            
+
             Collider[] hitColliders = Physics.OverlapSphere(transform.position, radius);
 
             foreach (Collider hitCollider in hitColliders)
             {
                 if (hitCollider.CompareTag("Enemy"))
                 {
-                    
+
                     BasicEnemy enemy = hitCollider.GetComponent<BasicEnemy>();
                     if (enemy != null)
                     {
@@ -58,8 +60,8 @@ public class Hourglass : MonoBehaviour
     public void TakeDamage(float damage)
     {
         hourglassHealth -= damage;
-        healthbar.fillAmount = hourglassHealth / 500f; 
-        UpdateHealthUI(); 
+        healthbar.fillAmount = hourglassHealth / maxHourglassHealth;
+        UpdateHealthUI();
         if (hourglassHealth <= 0)
         {
             Die();
@@ -70,22 +72,26 @@ public class Hourglass : MonoBehaviour
     public void ReduceHealthForDefenderPlacement(float healthCost)
     {
         hourglassHealth -= healthCost;
-        healthbar.fillAmount = hourglassHealth / 500f;
-        UpdateHealthUI(); 
+        healthbar.fillAmount = hourglassHealth / maxHourglassHealth;
+        UpdateHealthUI();
+        if (hourglassHealth <= 0)
+        {
+            Die();
+        }
     }
 
     // Method to restore health when an enemy is killed
     public void RestoreHealthForEnemyKill(float healthRestored)
     {
         hourglassHealth += healthRestored;
-        healthbar.fillAmount = hourglassHealth / 500f;
-        UpdateHealthUI(); 
+        healthbar.fillAmount = hourglassHealth / maxHourglassHealth;
+        UpdateHealthUI();
     }
 
     // Update the UI Text with the current health
     private void UpdateHealthUI()
     {
-        healthText.text = "" +hourglassHealth;
+        healthText.text = "" + hourglassHealth;
     }
 
     //when the hourglass is out of health load the game over scene
@@ -100,5 +106,19 @@ public class Hourglass : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, radius);
+    }
+    public void UpgradeRange(float amount)
+    {
+        radius += amount;
+    }
+
+    public void UpgradeHealth(float healthIncrease)
+    {
+        hourglassHealth += healthIncrease; // Increase current health
+        maxHourglassHealth += healthIncrease;
+        
+
+        healthbar.fillAmount = hourglassHealth / maxHourglassHealth; // Update the health bar
+        UpdateHealthUI();
     }
 }

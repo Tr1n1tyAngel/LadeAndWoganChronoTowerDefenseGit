@@ -60,4 +60,8 @@ public class Defender3 : DefenderBase
             lastAttackTime = Time.time;
         }
     }
+    public void UpgradeAttackSpeed(float amount)
+    {
+        attackCooldown = Mathf.Max(0.1f, attackCooldown - amount); // Ensure cooldown doesn't go below 0.1
+    }
 }

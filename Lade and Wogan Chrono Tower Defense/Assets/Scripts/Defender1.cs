@@ -51,7 +51,7 @@ public class Defender1 : DefenderBase
 
         if (currentTarget != null)
         {
-            AttackEnemy(currentTarget); 
+            AttackEnemy(currentTarget);
         }
     }
 
@@ -63,5 +63,9 @@ public class Defender1 : DefenderBase
             enemy.TakeDamage(attackDamage);
             lastAttackTime = Time.time;
         }
+    }
+    public void UpgradeDamage(float amount)
+    {
+        attackDamage += amount;
     }
 }
