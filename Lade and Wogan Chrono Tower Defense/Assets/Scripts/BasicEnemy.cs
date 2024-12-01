@@ -21,6 +21,7 @@ public class BasicEnemy : MonoBehaviour
     protected DefenderBase currentTarget;
     protected Hourglass currentTargetH;
     public WorldSpaceHealthBar worldSpaceHealthBar;
+    public ProceduralSoundtrack proceduralSoundtrack;
 
     //enemy waypoints for them to move along the path
     private List<Vector3> waypoints = new List<Vector3>();
@@ -30,6 +31,7 @@ public class BasicEnemy : MonoBehaviour
     private void Start()
     {
         worldSpaceHealthBar = GetComponentInChildren<WorldSpaceHealthBar>();
+        proceduralSoundtrack = FindObjectOfType<ProceduralSoundtrack>();
     }
     //initializes the path depending on which path is chosen upon enemy spawn
     public void InitializePath(int pathIndex)
@@ -54,6 +56,7 @@ public class BasicEnemy : MonoBehaviour
 
     protected virtual void Die()
     {
+        proceduralSoundtrack.PlayEnemyDeathEffect();
         Destroy(gameObject);
     }
 

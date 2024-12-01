@@ -16,6 +16,7 @@ public class Defender3 : DefenderBase
         attackCooldown = 5f;          // Slower attack rate
 
         worldSpaceHealthBar = GetComponentInChildren<WorldSpaceHealthBar>();
+        proceduralSoundtrack = FindObjectOfType<ProceduralSoundtrack>();
     }
 
     public override void Update()

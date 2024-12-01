@@ -47,6 +47,8 @@ public class UpgradeManager : MonoBehaviour
     public GameObject defender2Prefab;
     public GameObject defender3Prefab;
 
+    public ProceduralSoundtrack proceduralSoundtrack;
+
     private bool isMenuOpen = false;   // Tracks whether the upgrade menu is open
 
     void Start()
@@ -78,6 +80,7 @@ public class UpgradeManager : MonoBehaviour
     // Performs the upgrade and disables the button
     private void PerformUpgrade(Button button)
     {
+        proceduralSoundtrack.PlayUpgradeEffect();
             button.interactable = false;
             button.GetComponent<Image>().color = Color.green; // Indicate upgrade success
         

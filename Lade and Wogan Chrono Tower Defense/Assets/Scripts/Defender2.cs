@@ -17,6 +17,7 @@ public class Defender2 : DefenderBase
         attackCooldown = 0f;          // Constant slow effect
 
         worldSpaceHealthBar = GetComponentInChildren<WorldSpaceHealthBar>();
+        proceduralSoundtrack = FindObjectOfType<ProceduralSoundtrack>();
 
         // Add a trigger collider to define the slow radius
         SphereCollider slowCollider = gameObject.AddComponent<SphereCollider>();

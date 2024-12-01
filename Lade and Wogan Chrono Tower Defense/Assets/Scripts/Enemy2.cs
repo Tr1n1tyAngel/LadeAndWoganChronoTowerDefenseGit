@@ -16,6 +16,7 @@ public class Enemy2 : BasicEnemy
 
         // Enemy health bar
         worldSpaceHealthBar = GetComponentInChildren<WorldSpaceHealthBar>();
+        proceduralSoundtrack = FindObjectOfType<ProceduralSoundtrack>();
 
         // Initialize the path
         int pathIndex = GetNearestPathIndex();

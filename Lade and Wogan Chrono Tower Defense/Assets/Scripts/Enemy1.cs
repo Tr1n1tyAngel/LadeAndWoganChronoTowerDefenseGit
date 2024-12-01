@@ -15,6 +15,7 @@ public class Enemy1 : BasicEnemy
         attackRange = 8f;
         //Enemy health bar
         worldSpaceHealthBar = GetComponentInChildren<WorldSpaceHealthBar>();
+        proceduralSoundtrack = FindObjectOfType<ProceduralSoundtrack>();
 
         //initializes the path the enemy must walk on
         int pathIndex = GetNearestPathIndex();

@@ -13,9 +13,11 @@ public class DefenderBase : MonoBehaviour
     public float lastAttackTime = 0f;
     //base defender health bar
     public WorldSpaceHealthBar worldSpaceHealthBar;
+    public ProceduralSoundtrack proceduralSoundtrack;
     public void Start()
     {
         worldSpaceHealthBar = GetComponentInChildren<WorldSpaceHealthBar>();
+        proceduralSoundtrack = FindObjectOfType<ProceduralSoundtrack>();
     }
 
     //For if the defender is attacked
@@ -41,6 +43,7 @@ public class DefenderBase : MonoBehaviour
 
     void Die()
     {
+        proceduralSoundtrack.PlayDefenderDeathEffect();
         Destroy(gameObject);
     }
 

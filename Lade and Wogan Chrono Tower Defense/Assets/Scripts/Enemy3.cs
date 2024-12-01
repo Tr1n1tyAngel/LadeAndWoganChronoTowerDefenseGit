@@ -14,9 +14,10 @@ public class Enemy3 : BasicEnemy
         movementSpeed = 5f;       // Faster movement speed
         damage = 5f;              // Lower damage per hit
         attackRange = 8f;         // Similar range or adjust as needed
-        
+
         // Enemy health bar
         worldSpaceHealthBar = GetComponentInChildren<WorldSpaceHealthBar>();
+        proceduralSoundtrack = FindObjectOfType<ProceduralSoundtrack>();
 
         // Initialize the path
         int pathIndex = GetNearestPathIndex();
