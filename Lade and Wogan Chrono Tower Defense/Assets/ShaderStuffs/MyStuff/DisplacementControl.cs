@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class DisplacementControl : MonoBehaviour
 {
-    [SerializeField] private float displacementAmount;
-    [SerializeField] private ParticleSystem shootParticles;
-    [SerializeField] MeshRenderer meshRenderer;
+    [SerializeField] public float displacementAmount;
+    [SerializeField] public ParticleSystem shootParticles;
+    [SerializeField] public MeshRenderer meshRenderer;
 
     void Start()
     {
@@ -18,10 +18,6 @@ public class DisplacementControl : MonoBehaviour
         displacementAmount = Mathf.Lerp(displacementAmount, 0, Time.deltaTime);
         meshRenderer.material.SetFloat("_Amount", displacementAmount);
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            displacementAmount += 1f;
-            shootParticles.Play();
-        }
+        
     }
 }

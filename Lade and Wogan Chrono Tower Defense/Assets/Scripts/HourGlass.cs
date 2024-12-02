@@ -18,6 +18,8 @@ public class Hourglass : MonoBehaviour
     //UI elements used by the hourglass
     public Image healthbar;
     public TextMeshProUGUI healthText;
+    public GameObject baseModel;
+    public GameObject upgradeModel;
 
     private void Start()
     {
@@ -116,9 +118,14 @@ public class Hourglass : MonoBehaviour
     {
         hourglassHealth += healthIncrease; // Increase current health
         maxHourglassHealth += healthIncrease;
-        
+
 
         healthbar.fillAmount = hourglassHealth / maxHourglassHealth; // Update the health bar
         UpdateHealthUI();
+    }
+    public void ChangeModel()
+    {
+        baseModel.SetActive(false);
+        upgradeModel.SetActive(true);
     }
 }

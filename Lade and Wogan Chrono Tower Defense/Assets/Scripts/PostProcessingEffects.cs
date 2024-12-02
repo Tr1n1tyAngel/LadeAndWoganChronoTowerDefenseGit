@@ -1,32 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering.PostProcessing;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 public class PostProcessingEffects : MonoBehaviour
 {
     public Hourglass hourglass; // Reference to the Hourglass script
-    public PostProcessVolume postProcessVolume; // Reference to the Post Process Volume
+    public Volume postProcessVolume; // Reference to the Post Process Volume
 
-    private ColorGrading colorGrading;
+    private ColorAdjustments colorAdjustments;
     private Vignette vignette;
 
     void Start()
     {
-        // Retrieve or add Color Grading and Vignette effects to the volume
-        if (postProcessVolume.profile.TryGetSettings(out colorGrading) == false)
+        if (postProcessVolume.profile.TryGet<ColorAdjustments>(out colorAdjustments) == false)
         {
-            colorGrading = postProcessVolume.profile.AddSettings<ColorGrading>();
+            colorAdjustments = postProcessVolume.profile.Add<ColorAdjustments>();
         }
 
-        if (postProcessVolume.profile.TryGetSettings(out vignette) == false)
+        if (postProcessVolume.profile.TryGet<Vignette>(out vignette) == false)
         {
-            vignette = postProcessVolume.profile.AddSettings<Vignette>();
+            vignette = postProcessVolume.profile.Add<Vignette>();
         }
 
         // Initial settings
-        colorGrading.saturation.value = 0; // Full color
-        vignette.enabled.value = false;   // Disable vignette
+        colorAdjustments.saturation.value = 0; // Full color
+        vignette.active = false;              // Disable vignette
     }
 
     void Update()
@@ -36,25 +36,26 @@ public class PostProcessingEffects : MonoBehaviour
 
     void UpdatePostProcessingEffects()
     {
-        // Enable and adjust red vignette if health is below 100
+        // Enable and adjust red vignette if health is below 200
         if (hourglass.hourglassHealth < 200f)
         {
-            vignette.enabled.value = true;
+            vignette.active = true;
             vignette.color.value = Color.red; // Red vignette
 
-            // Calculate vignette intensity based on remaining health below 100
-            float lowHealthPercentage = hourglass.hourglassHealth / 200f; // Health percentage out of 100
+            // Calculate vignette intensity based on remaining health below 200
+            float lowHealthPercentage = hourglass.hourglassHealth / 200f; // Health percentage out of 200
             vignette.intensity.value = Mathf.Lerp(1f, 0f, lowHealthPercentage); // Intensity increases as health decreases
             vignette.smoothness.value = 0.6f; // Adjust smoothness of the vignette
         }
         else
         {
-            vignette.enabled.value = false; // Disable vignette if health is 100 or above
+            vignette.active = false; // Disable vignette if health is 200 or above
         }
+
         // Adjust saturation based on hourglass health (lower health = less saturation)
         float healthPercentage = hourglass.hourglassHealth / hourglass.maxHourglassHealth;
-        colorGrading.saturation.value = Mathf.Lerp(-100, 0, healthPercentage); // -100 = black and white, 0 = full color
+        colorAdjustments.saturation.value = Mathf.Lerp(-100, 0, healthPercentage); // -100 = black and white, 0 = full color
 
-        
+
     }
 }

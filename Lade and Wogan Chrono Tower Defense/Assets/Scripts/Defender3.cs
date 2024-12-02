@@ -5,6 +5,9 @@ using UnityEngine;
 public class Defender3 : DefenderBase
 {
     private BasicEnemy currentTarget;
+    public DisplacementControl displacementControl;
+    public GameObject baseModel;
+    public GameObject upgradeModel;
 
     void Start()
     {
@@ -16,7 +19,9 @@ public class Defender3 : DefenderBase
         attackCooldown = 5f;          // Slower attack rate
 
         worldSpaceHealthBar = GetComponentInChildren<WorldSpaceHealthBar>();
+        displacementControl = GetComponentInChildren<DisplacementControl>();
         proceduralSoundtrack = FindObjectOfType<ProceduralSoundtrack>();
+        
     }
 
     public override void Update()
@@ -57,6 +62,17 @@ public class Defender3 : DefenderBase
     {
         if (Time.time >= lastAttackTime + attackCooldown)
         {
+            if(upgradeModel.activeSelf)
+            {
+                displacementControl = GetComponentInChildren<DisplacementControl>();
+                displacementControl.displacementAmount = Mathf.Lerp(displacementControl.displacementAmount, 0, Time.deltaTime);
+                displacementControl.meshRenderer.material.SetFloat("_Amount", displacementControl.displacementAmount);
+
+
+                displacementControl.displacementAmount += 3f;
+                displacementControl.shootParticles.Play();
+            }
+            
             enemy.TakeDamage(attackDamage);
             lastAttackTime = Time.time;
         }
@@ -64,5 +80,10 @@ public class Defender3 : DefenderBase
     public void UpgradeAttackSpeed(float amount)
     {
         attackCooldown = Mathf.Max(0.1f, attackCooldown - amount); // Ensure cooldown doesn't go below 0.1
+    }
+    public void ChangeModel()
+    {
+        baseModel.SetActive(false);
+        upgradeModel.SetActive(true);
     }
 }

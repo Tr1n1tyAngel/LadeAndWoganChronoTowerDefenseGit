@@ -14,6 +14,7 @@ public class DefenderBase : MonoBehaviour
     //base defender health bar
     public WorldSpaceHealthBar worldSpaceHealthBar;
     public ProceduralSoundtrack proceduralSoundtrack;
+    
     public void Start()
     {
         worldSpaceHealthBar = GetComponentInChildren<WorldSpaceHealthBar>();

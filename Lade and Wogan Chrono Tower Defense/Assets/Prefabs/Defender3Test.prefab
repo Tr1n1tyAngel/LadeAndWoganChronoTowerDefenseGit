@@ -131,6 +131,9 @@ MonoBehaviour:
   lastAttackTime: 0
   worldSpaceHealthBar: {fileID: 0}
   proceduralSoundtrack: {fileID: 0}
+  displacementControl: {fileID: 0}
+  baseModel: {fileID: 7616397030224217660}
+  upgradeModel: {fileID: 3046628091651416296}
 --- !u!1 &609022019313652120
 GameObject:
   m_ObjectHideFlags: 0
@@ -651,7 +654,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 3f1cc85de0353174594d889de8c63bcf, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -749,7 +752,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 897e3ded32c79e247853017454e09026, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

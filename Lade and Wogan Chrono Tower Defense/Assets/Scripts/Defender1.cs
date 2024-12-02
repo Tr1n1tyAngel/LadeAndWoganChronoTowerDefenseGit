@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class Defender1 : DefenderBase
 {
-    private BasicEnemy currentTarget;  
+    private BasicEnemy currentTarget;
+    public DisplacementControl displacementControl;
+    public GameObject baseModel;
+    public GameObject upgradeModel;
 
     void Start()
     {
@@ -13,10 +16,12 @@ public class Defender1 : DefenderBase
         defenderMaxHealth = 100f;
         attackDamage = 15f;       
         attackRange = 5f;        
-        attackCooldown = 1.5f;   
+        attackCooldown = 1.5f;
         //defender health bar
         worldSpaceHealthBar = GetComponentInChildren<WorldSpaceHealthBar>();
+        displacementControl = GetComponentInChildren<DisplacementControl>();
         proceduralSoundtrack = FindObjectOfType<ProceduralSoundtrack>();
+        
 
     }
 
@@ -61,6 +66,16 @@ public class Defender1 : DefenderBase
     {
         if (Time.time >= lastAttackTime + attackCooldown)
         {
+            if (upgradeModel.activeSelf)
+            {
+                displacementControl = GetComponentInChildren<DisplacementControl>();
+                displacementControl.displacementAmount = Mathf.Lerp(displacementControl.displacementAmount, 0, Time.deltaTime);
+                displacementControl.meshRenderer.material.SetFloat("_Amount", displacementControl.displacementAmount);
+
+
+                displacementControl.displacementAmount += 3f;
+                displacementControl.shootParticles.Play();
+            }          
             enemy.TakeDamage(attackDamage);
             lastAttackTime = Time.time;
         }
@@ -68,5 +83,11 @@ public class Defender1 : DefenderBase
     public void UpgradeDamage(float amount)
     {
         attackDamage += amount;
+    }
+
+    public void ChangeModel()
+    {
+        baseModel.SetActive(false);
+        upgradeModel.SetActive(true);
     }
 }

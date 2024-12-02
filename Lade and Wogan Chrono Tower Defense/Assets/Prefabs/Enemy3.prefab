@@ -294,6 +294,7 @@ MonoBehaviour:
   meshGenerator: {fileID: 0}
   hourglass: {fileID: 0}
   worldSpaceHealthBar: {fileID: 0}
+  proceduralSoundtrack: {fileID: 0}
 --- !u!1 &766795845078247198
 GameObject:
   m_ObjectHideFlags: 0

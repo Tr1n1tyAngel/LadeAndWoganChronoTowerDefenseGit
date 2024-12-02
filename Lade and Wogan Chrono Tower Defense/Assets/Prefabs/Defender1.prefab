@@ -123,14 +123,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 038a12162835e6a4eae2cec664d7541c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defenderHealth: 100
-  defenderMaxHealth: 100
-  attackDamage: 10
+  defenderHealth: 350
+  defenderMaxHealth: 350
+  attackDamage: 90
   attackRange: 2
   attackCooldown: 2
   lastAttackTime: 0
   worldSpaceHealthBar: {fileID: 0}
   proceduralSoundtrack: {fileID: 0}
+  displacementControl: {fileID: 0}
+  baseModel: {fileID: 8482640057425025411}
+  upgradeModel: {fileID: 3964965435866060844}
 --- !u!1 &609022019313652120
 GameObject:
   m_ObjectHideFlags: 0
@@ -978,6 +981,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tower1Up
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f774d62079381914ba1e1c7fa63fc6c6, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -986,6 +993,11 @@ PrefabInstance:
       addedObject: {fileID: 4425231711609307116}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f774d62079381914ba1e1c7fa63fc6c6, type: 3}
+--- !u!1 &3964965435866060844 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: f774d62079381914ba1e1c7fa63fc6c6, type: 3}
+  m_PrefabInstance: {fileID: 4307423524105135485}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4345326727704068758 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: f774d62079381914ba1e1c7fa63fc6c6, type: 3}
