@@ -181,7 +181,7 @@ MonoBehaviour:
   rangeIndicatorPrefab: {fileID: 6089041100230074798, guid: 870b0bdd37335cf4dbc067c946ff6618, type: 3}
   defender2PlacePrefab: {fileID: 367255446675730370, guid: fce60f9ff93c0bb4f86a0bb4d51304c8, type: 3}
   defender2Button: {fileID: 370062072}
-  defender3PlacePrefab: {fileID: 367255446675730370, guid: 42cdbcc8ebc1f884ab150be0976d4675, type: 3}
+  defender3PlacePrefab: {fileID: 367255446675730370, guid: e0f60246e4ab8144cb28e46b417a9e3a, type: 3}
   defender3Button: {fileID: 1849148712}
   meshGenerator: {fileID: 1838571900}
   hourglass: {fileID: 1543347719017434338}
@@ -3325,7 +3325,7 @@ MonoBehaviour:
   defender3SpeedButton: {fileID: 624725698}
   defender1Prefab: {fileID: 367255446675730370, guid: 11f67e76f6cf54947b41c882e8a5929d, type: 3}
   defender2Prefab: {fileID: 367255446675730370, guid: fce60f9ff93c0bb4f86a0bb4d51304c8, type: 3}
-  defender3Prefab: {fileID: 367255446675730370, guid: 42cdbcc8ebc1f884ab150be0976d4675, type: 3}
+  defender3Prefab: {fileID: 367255446675730370, guid: e0f60246e4ab8144cb28e46b417a9e3a, type: 3}
   proceduralSoundtrack: {fileID: 1371489700}
 --- !u!1 &1371489699
 GameObject:

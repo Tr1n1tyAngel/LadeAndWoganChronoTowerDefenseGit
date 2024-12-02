@@ -48,7 +48,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 100}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 237
+  controlID: 53
   draggingID: 0
 --- !u!114 &3
 MonoBehaviour:
@@ -226,7 +226,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 100}
   m_MaxSize: {x: 16192, y: 16192}
   vertical: 1
-  controlID: 238
+  controlID: 54
   draggingID: 0
 --- !u!114 &10
 MonoBehaviour:
@@ -252,7 +252,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 50}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 227
+  controlID: 43
   draggingID: 0
 --- !u!114 &11
 MonoBehaviour:
@@ -1518,6 +1518,8 @@ MonoBehaviour:
     - {fileID: -65518267215295688, guid: b594e49b2b07694429dc382e8e2c38be, type: 2}
     - {fileID: 8420118500840389283, guid: bb8ad2b922ce8ae458389ee66b9ec40e, type: 2}
     - {fileID: -5690721057461317986, guid: f3851f1707e59f443bbc2695dc0524d2, type: 2}
+    - {fileID: -8014529101602509202, guid: 3e35a44cd96c4a545bf447be1603401c, type: 2}
+    - {fileID: -8014529101602509202, guid: f6efeb8db4e253149b8cb61f083e6578, type: 2}
     m_ValueSerializationHelper:
     - e00: 0.7273684
       e01: 0
@@ -1615,10 +1617,42 @@ MonoBehaviour:
       e31: 0
       e32: 0
       e33: 1
+    - e00: 0.6863158
+      e01: 0
+      e02: 0
+      e03: -19.315796
+      e10: 0
+      e11: 0.6863158
+      e12: 0
+      e13: 262.37894
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
+    - e00: 0.6863158
+      e01: 0
+      e02: 0
+      e03: -19.315796
+      e10: 0
+      e11: 0.6863158
+      e12: 0
+      e13: 262.26105
+      e20: 0
+      e21: 0
+      e22: 1
+      e23: 0
+      e30: 0
+      e31: 0
+      e32: 0
+      e33: 1
   m_PreviewAnimator: {fileID: 0}
-  m_AnimatorController: {fileID: 9100000, guid: f3851f1707e59f443bbc2695dc0524d2, type: 2}
+  m_AnimatorController: {fileID: 9100000, guid: f6efeb8db4e253149b8cb61f083e6578, type: 2}
   m_BreadCrumbs:
-  - m_Target: {fileID: -5690721057461317986, guid: f3851f1707e59f443bbc2695dc0524d2, type: 2}
+  - m_Target: {fileID: -8014529101602509202, guid: f6efeb8db4e253149b8cb61f083e6578, type: 2}
     m_ScrollPosition: {x: 0, y: 0}
   stateMachineGraph: {fileID: 0}
   stateMachineGraphGUI: {fileID: 0}
@@ -1858,7 +1892,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets
+    - Assets/Prefabs
     m_Globs: []
     m_OriginalText: 
     m_ImportLogFlags: 0
@@ -1866,17 +1900,17 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets
+  - Assets/Prefabs
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Game Engines\UnityProjects\LadeAndWoganChronoTowerDefenseGit\Lade
     and Wogan Chrono Tower Defense
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: b0750000
-    m_LastClickedID: 30128
-    m_ExpandedIDs: 00000000b07500002aa8000000ca9a3bffffff7f
+    scrollPos: {x: 0, y: 44}
+    m_SelectedIDs: 6e7a0000
+    m_LastClickedID: 31342
+    m_ExpandedIDs: 000000004e7a0000767a000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1904,7 +1938,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000b0750000
+    m_ExpandedIDs: 000000004e7a0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1932,7 +1966,7 @@ MonoBehaviour:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
     m_HadKeyboardFocusLastEvent: 1
-    m_ExpandedInstanceIDs: c6230000f4ccffff1c3f01001264000000000000307e0000ee9600001e7f00006ee100008aff0000a00c0100
+    m_ExpandedInstanceIDs: c6230000f4ccffff1c3f01001264000000000000307e0000ee9600001e7f00006ee100008aff0000a00c010030a50000c8aa00005ec400005ac40000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -2046,7 +2080,7 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: be39ffff1c3affffeefaffff
+      m_ExpandedIDs: fe3ffcff0040fcff6640fcffb2350100b4350100c4350100d4350100
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -2148,7 +2182,7 @@ MonoBehaviour:
       collapsed: 0
       displayed: 0
       snapOffset: {x: 0, y: 0}
-      snapOffsetDelta: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 25}
       snapCorner: 1
       id: unity-search-toolbar
       index: 1
@@ -2200,7 +2234,7 @@ MonoBehaviour:
       collapsed: 0
       displayed: 0
       snapOffset: {x: 0, y: 0}
-      snapOffsetDelta: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 25}
       snapCorner: 0
       id: Scene View/Light Settings
       index: 1
@@ -2226,7 +2260,7 @@ MonoBehaviour:
       collapsed: 0
       displayed: 0
       snapOffset: {x: 0, y: 0}
-      snapOffsetDelta: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 25}
       snapCorner: 0
       id: Scene View/Cloth Constraints
       index: 2
@@ -2239,7 +2273,7 @@ MonoBehaviour:
       collapsed: 0
       displayed: 0
       snapOffset: {x: 0, y: 0}
-      snapOffsetDelta: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 25}
       snapCorner: 0
       id: Scene View/Cloth Collisions
       index: 3
@@ -2291,7 +2325,7 @@ MonoBehaviour:
       collapsed: 0
       displayed: 0
       snapOffset: {x: 0, y: 0}
-      snapOffsetDelta: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 25}
       snapCorner: 0
       id: Scene View/Occlusion Culling
       index: 4
@@ -2304,7 +2338,7 @@ MonoBehaviour:
       collapsed: 0
       displayed: 0
       snapOffset: {x: 0, y: 0}
-      snapOffsetDelta: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 25}
       snapCorner: 0
       id: Scene View/Physics Debugger
       index: 6
@@ -2317,7 +2351,7 @@ MonoBehaviour:
       collapsed: 0
       displayed: 0
       snapOffset: {x: 0, y: 0}
-      snapOffsetDelta: {x: 0, y: 0}
+      snapOffsetDelta: {x: 0, y: 25}
       snapCorner: 0
       id: Scene View/Scene Visibility
       index: 7
@@ -2437,7 +2471,7 @@ MonoBehaviour:
       snapOffsetDelta: {x: 0, y: 0}
       snapCorner: 0
       id: UnityEditor.SceneViewCameraOverlay
-      index: 11
+      index: 12
       layout: 4
       size: {x: 0, y: 0}
       sizeOverriden: 0
@@ -2457,17 +2491,17 @@ MonoBehaviour:
     m_OverlaysVisible: 1
   m_WindowGUID: cc27987af1a868c49b0894db9c0f5429
   m_Gizmos: 1
-  m_OverrideSceneCullingMask: 6917529027641081856
-  m_SceneIsLit: 1
+  m_OverrideSceneCullingMask: 0
+  m_SceneIsLit: 0
   m_SceneLighting: 1
   m_2DMode: 0
   m_isRotationLocked: 0
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 24.077318, y: -0.63592386, z: 25.795033}
+    m_Target: {x: -1.0706247, y: -1.2037382, z: 1.5754315}
     speed: 2
-    m_Value: {x: 24.077318, y: -0.63592386, z: 25.795033}
+    m_Value: {x: -1.0706247, y: -1.2037382, z: 1.5754315}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -2478,7 +2512,7 @@ MonoBehaviour:
   m_SceneViewState:
     m_AlwaysRefresh: 0
     showFog: 1
-    showSkybox: 1
+    showSkybox: 0
     showFlares: 1
     showImageEffects: 1
     showParticleSystems: 1
@@ -2513,20 +2547,20 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: -0.23790938, y: 0.030551048, z: -0.007708831, w: -0.9709112}
+    m_Target: {x: 0.0041837073, y: 0.99592483, z: -0.052623935, w: 0.074534886}
     speed: 2
-    m_Value: {x: -0.23787819, y: 0.030547041, z: -0.0077078203, w: -0.9707839}
+    m_Value: {x: 0.0041832714, y: 0.99582106, z: -0.05261845, w: 0.07452712}
   m_Size:
-    m_Target: 5.452144
+    m_Target: 1.9086535
     speed: 2
-    m_Value: 5.452144
+    m_Value: 1.9086535
   m_Ortho:
     m_Target: 0
     speed: 2
     m_Value: 0
   m_CameraSettings:
-    m_Speed: 0.88056046
-    m_SpeedNormalized: 0.44000024
+    m_Speed: 1.1204404
+    m_SpeedNormalized: 0.5600002
     m_SpeedMin: 0.001
     m_SpeedMax: 2
     m_EasingEnabled: 1
@@ -2611,7 +2645,7 @@ MonoBehaviour:
     m_HSlider: 0
     m_VSlider: 0
     m_IgnoreScrollWheelUntilClicked: 0
-    m_EnableMouseInput: 1
+    m_EnableMouseInput: 0
     m_EnableSliderZoomHorizontal: 0
     m_EnableSliderZoomVertical: 0
     m_UniformScale: 1
