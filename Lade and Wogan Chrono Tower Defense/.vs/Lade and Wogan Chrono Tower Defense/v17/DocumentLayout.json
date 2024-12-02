@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Game Engines\\UnityProjects\\LadeAndWoganChronoTowerDefenseGit\\Lade and Wogan Chrono Tower Defense\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{46EA1992-39D8-D430-F18C-9C5EBB617489}|Assembly-CSharp.csproj|c:\\game engines\\unityprojects\\ladeandwoganchronotowerdefensegit\\lade and wogan chrono tower defense\\assets\\scripts\\defender2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{46EA1992-39D8-D430-F18C-9C5EBB617489}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\defender2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Defender2.cs",
+              "DocumentMoniker": "C:\\Game Engines\\UnityProjects\\LadeAndWoganChronoTowerDefenseGit\\Lade and Wogan Chrono Tower Defense\\Assets\\Scripts\\Defender2.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Defender2.cs",
+              "ToolTip": "C:\\Game Engines\\UnityProjects\\LadeAndWoganChronoTowerDefenseGit\\Lade and Wogan Chrono Tower Defense\\Assets\\Scripts\\Defender2.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Defender2.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAQAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-01T21:09:08.182Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
